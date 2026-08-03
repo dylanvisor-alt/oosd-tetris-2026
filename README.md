@@ -1,7 +1,4 @@
-# oosd-tetris-2026
 JavaFX Tetris implementation for 2006ICT Object-Oriented Software Development, Griffith University (2026). Built with Maven/IntelliJ using OO design patterns (GRASP, Factory, Singleton, Observer, MVC).
-
-Tetris — 2006ICT OOSD Project
 
 This is our group's build of an enhanced Tetris game for the 2006ICT Object-Oriented Software Development course at Griffith University (2026). The brief is to take the classic 1984 Alexey Pajitnov game and rebuild it properly — with real OO design behind it, not just a working game — using JavaFX for the interface and Maven to manage the build.
 
@@ -32,69 +29,6 @@ Java 17
 JavaFX — chosen because it's the framework the course specifically wants us to demonstrate, and it handles the animation/timeline stuff Tetris needs (smooth piece movement) better than plain Swing would.
 Maven — for dependency management and because the marking rubric explicitly requires a standard Maven project layout.
 IntelliJ IDEA — our IDE of choice across the team.
-Project Structure
-oosd-tetris-2026/
-├── pom.xml                          # Maven build config — JavaFX deps, Java version, plugins
-├── README.md
-├── docs/
-│   ├── diagrams/                    # Use case diagram, activity diagram (Milestone 1)
-│   │   ├── use-case-diagram.png
-│   │   └── activity-diagram.png
-│   └── milestone1/
-│       └── Milestone1_Submission.docx
-└── src/
-    ├── main/
-    │   ├── java/com/oosd/tetris/
-    │   │   ├── Main.java                    # JavaFX Application entry point — launches splash screen
-    │   │   │
-    │   │   ├── ui/
-    │   │   │   ├── SplashScreen.java        # Startup screen, group/course identity, few seconds then auto-advance
-    │   │   │   ├── MainMenuScreen.java      # Play / Configuration / High Scores / Exit
-    │   │   │   ├── ConfigurationScreen.java # Field size, level, music, SFX, AI play, extended mode
-    │   │   │   ├── HighScoreScreen.java     # Top 10 list (dummy data for M1)
-    │   │   │   ├── GameScreen.java          # The actual 10x20 play field
-    │   │   │   ├── PauseOverlay.java        # Shown on P key, freezes game loop
-    │   │   │   └── ExitDialog.java          # Yes/No confirmation before quitting
-    │   │   │
-    │   │   ├── controller/
-    │   │   │   ├── GameController.java      # Game loop, timer-driven drop, key input handling
-    │   │   │   ├── ConfigController.java    # Wires config screen controls to GameConfig
-    │   │   │   └── HighScoreController.java # Loads/sorts score entries for display
-    │   │   │
-    │   │   ├── model/
-    │   │   │   ├── Board.java               # 10x20 grid, row-clear detection
-    │   │   │   ├── Tetromino.java           # Abstract base class for all pieces
-    │   │   │   ├── Movable.java             # Interface — move/rotate contract
-    │   │   │   ├── shapes/
-    │   │   │   │   ├── IPiece.java
-    │   │   │   │   ├── OPiece.java
-    │   │   │   │   ├── TPiece.java
-    │   │   │   │   ├── SPiece.java
-    │   │   │   │   ├── ZPiece.java
-    │   │   │   │   ├── JPiece.java
-    │   │   │   │   └── LPiece.java
-    │   │   │   ├── TetrominoFactory.java    # Factory pattern — spawns random next piece
-    │   │   │   ├── GameState.java           # Enum: RUNNING, PAUSED, GAME_OVER
-    │   │   │   ├── ScoreEntry.java          # Record — name + score for high score table
-    │   │   │   └── GameConfig.java          # Record — holds config screen settings
-    │   │   │
-    │   │   └── util/
-    │   │       ├── SceneManager.java        # Singleton — handles switching between screens
-    │   │       └── Constants.java           # Board dimensions, drop speed, etc.
-    │   │
-    │   └── resources/com/oosd/tetris/
-    │       ├── styles/style.css
-    │       ├── images/logo.png
-    │       └── sounds/
-    │           ├── music.mp3
-    │           └── clear-line.wav
-    │
-    └── test/java/com/oosd/tetris/
-        ├── BoardTest.java
-        └── TetrominoTest.java
-
-No nested project folders, standard src/main + src/test Maven layout throughout — this matters because the file structure itself is a marked item.
-
 What's actually working for Milestone 1
 
 This milestone isn't the finished game — it's the foundation plus four specific screens, demoed in a short video. What needs to genuinely work by the deadline:
