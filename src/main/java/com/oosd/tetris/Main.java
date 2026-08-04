@@ -26,8 +26,7 @@ public class Main extends Application {
 
     private static final int CELL_SIZE = 25;
     private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
-    private static final Color LOCKED_COLOR = Color.web("#5c6bc0");
-    private static final Color ACTIVE_COLOR = Color.web("#e91e63");
+    private static final Color LOCKED_COLOR = Color.web("#007aff");
     private static final Duration TICK_RATE = Duration.millis(333);
 
     private final Board board = new Board();
@@ -232,7 +231,7 @@ public class Main extends Application {
 
                     if (boardRow >= 0 && boardRow < Board.HEIGHT
                             && boardCol >= 0 && boardCol < Board.WIDTH) {
-                        cellViews[boardRow][boardCol].setFill(ACTIVE_COLOR);
+                        cellViews[boardRow][boardCol].setFill(piece.getColor());
                     }
                 }
             }

@@ -1,11 +1,12 @@
 package com.oosd.tetris.model.shapes;
 
 import com.oosd.tetris.model.Tetromino;
+import javafx.scene.paint.Color;
 
 public class OPiece extends Tetromino {
 
-    public OPiece(int startX, int startY) {
-        super(startX, startY);
+    public OPiece(int startX, int startY, Color color) {
+        super(startX, startY, color);
     }
 
     @Override
