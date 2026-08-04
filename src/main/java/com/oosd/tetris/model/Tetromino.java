@@ -23,7 +23,8 @@ public abstract class Tetromino implements Movable {
         y++;
     }
 
-    // Each concrete shape defines its own rotation logic
     @Override
     public abstract void rotate();
+
+    public abstract int[][] getShape();
 }

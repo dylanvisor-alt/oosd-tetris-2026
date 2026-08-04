@@ -25,6 +25,7 @@ public class TPiece extends Tetromino {
         rotationState = (rotationState + 1) % 4;
     }
 
+    @Override
     public int[][] getShape() {
         return switch (rotationState) {
             case 0 -> new int[][] {{0, 1, 0}, {1, 1, 1}};

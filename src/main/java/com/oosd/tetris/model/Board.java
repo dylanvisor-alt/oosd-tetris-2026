@@ -28,6 +28,40 @@ public class Board {
         return grid[row][col];
     }
 
+    // NEW: checks if a piece's shape can legally sit at a given position
+    public boolean canPlace(Tetromino piece, int newX, int newY) {
+        int[][] shape = piece.getShape();
+
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col] == 1) {
+                    int boardRow = newY + row;
+                    int boardCol = newX + col;
+
+                    if (isCellOccupied(boardRow, boardCol)) {
+                        return false; // hits a wall, floor, or existing block
+                    }
+                }
+            }
+        }
+        return true; // no collisions found, this position is legal
+    }
+
+    // NEW: permanently writes a piece's blocks into the grid once it lands
+    public void lockPiece(Tetromino piece) {
+        int[][] shape = piece.getShape();
+
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col] == 1) {
+                    int boardRow = piece.getY() + row;
+                    int boardCol = piece.getX() + col;
+                    setCell(boardRow, boardCol, 1);
+                }
+            }
+        }
+    }
+
     public int clearFullRows() {
         int clearedCount = 0;
 
@@ -35,7 +69,7 @@ public class Board {
             if (isRowFull(row)) {
                 removeRow(row);
                 clearedCount++;
-                row++; // recheck same index, since rows shifted down
+                row++;
             }
         }
 
