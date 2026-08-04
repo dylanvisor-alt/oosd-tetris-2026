@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
+// factory pattern - hands out a random piece (shape + colour) without the caller needing to know how that choice gets made.
 public class TetrominoFactory {
 
     private static final Random random = new Random();
@@ -29,7 +30,7 @@ public class TetrominoFactory {
 
     public static Tetromino createRandomPiece() {
         int choice = random.nextInt(7); // 0 to 6, one per shape
-        Color randomColor = COLORS[random.nextInt(COLORS.length)];
+        Color randomColor = COLORS[random.nextInt(COLORS.length)]; // independent of shape choice
         return switch (choice) {
             case 0 -> new IPiece(SPAWN_X, SPAWN_Y, randomColor);
             case 1 -> new OPiece(SPAWN_X, SPAWN_Y, randomColor);
@@ -38,7 +39,7 @@ public class TetrominoFactory {
             case 4 -> new ZPiece(SPAWN_X, SPAWN_Y, randomColor);
             case 5 -> new JPiece(SPAWN_X, SPAWN_Y, randomColor);
             case 6 -> new LPiece(SPAWN_X, SPAWN_Y, randomColor);
-            default -> new TPiece(SPAWN_X, SPAWN_Y, randomColor);
+            default -> new TPiece(SPAWN_X, SPAWN_Y, randomColor); // unreachable
         };
     }
 }

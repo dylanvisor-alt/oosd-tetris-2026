@@ -27,11 +27,11 @@ public class Main extends Application {
     private static final int CELL_SIZE = 25;
     private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
     private static final Color LOCKED_COLOR = Color.web("#007aff");
-    private static final Duration TICK_RATE = Duration.millis(333);
+    private static final Duration TICK_RATE = Duration.millis(333); // gravity speed
 
     private final Board board = new Board();
 
-    private Rectangle[][] cellViews;
+    private Rectangle[][] cellViews; // lets us recolour any board square directly
     private Tetromino currentPiece;
     private Timeline timeline;
     private GameState state;
@@ -44,6 +44,8 @@ public class Main extends Application {
         GridPane grid = new GridPane();
         cellViews = new Rectangle[Board.HEIGHT][Board.WIDTH];
 
+
+        // fix: fixed row/column sizing - prevents javafx from clipping last row
         for (int row = 0; row < Board.HEIGHT; row++) {
             RowConstraints rowConstraints = new RowConstraints(CELL_SIZE);
             rowConstraints.setFillHeight(false);
@@ -95,6 +97,7 @@ public class Main extends Application {
         primaryStage.sizeToScene();
         primaryStage.show();
 
+        // repeating timer that drives gravity - fires tick() every TICK_RATE
         timeline = new Timeline(new KeyFrame(TICK_RATE, e -> tick()));
         timeline.setCycleCount(Timeline.INDEFINITE);
 
@@ -107,7 +110,7 @@ public class Main extends Application {
     private void spawnPiece() {
         currentPiece = TetrominoFactory.createRandomPiece();
         if (!board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY())) {
-            endGame();
+            endGame(); // no room to spawn, stack too high, game over
         }
     }
 
@@ -180,6 +183,7 @@ public class Main extends Application {
     private void tryRotate() {
         currentPiece.rotate();
         if (!board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY())) {
+            // illegal rotation - spin 3 more times to cancel it out (4 states total)
             currentPiece.rotate();
             currentPiece.rotate();
             currentPiece.rotate();
@@ -228,7 +232,7 @@ public class Main extends Application {
                 if (shape[row][col] == 1) {
                     int boardRow = piece.getY() + row;
                     int boardCol = piece.getX() + col;
-
+                    // convert shape-local coordinates into real board coordinates
                     if (boardRow >= 0 && boardRow < Board.HEIGHT
                             && boardCol >= 0 && boardCol < Board.WIDTH) {
                         cellViews[boardRow][boardCol].setFill(piece.getColor());
