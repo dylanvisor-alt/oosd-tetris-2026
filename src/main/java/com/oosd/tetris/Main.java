@@ -28,7 +28,7 @@ public class Main extends Application {
     private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
     private static final Color LOCKED_COLOR = Color.web("#5c6bc0");
     private static final Color ACTIVE_COLOR = Color.web("#e91e63");
-    private static final Duration TICK_RATE = Duration.millis(500);
+    private static final Duration TICK_RATE = Duration.millis(333);
 
     private final Board board = new Board();
 
@@ -181,8 +181,6 @@ public class Main extends Application {
     private void tryRotate() {
         currentPiece.rotate();
         if (!board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY())) {
-            // no separate "undo" on the piece, so rotating 3 more times returns
-            // it to its prior state for every rotation period we use (1, 2 or 4)
             currentPiece.rotate();
             currentPiece.rotate();
             currentPiece.rotate();

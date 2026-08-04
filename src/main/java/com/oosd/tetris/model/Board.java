@@ -28,7 +28,6 @@ public class Board {
         return grid[row][col];
     }
 
-    // NEW: checks if a piece's shape can legally sit at a given position
     public boolean canPlace(Tetromino piece, int newX, int newY) {
         int[][] shape = piece.getShape();
 
@@ -39,15 +38,14 @@ public class Board {
                     int boardCol = newX + col;
 
                     if (isCellOccupied(boardRow, boardCol)) {
-                        return false; // hits a wall, floor, or existing block
+                        return false;
                     }
                 }
             }
         }
-        return true; // no collisions found, this position is legal
+        return true;
     }
 
-    // NEW: permanently writes a piece's blocks into the grid once it lands
     public void lockPiece(Tetromino piece) {
         int[][] shape = piece.getShape();
 
