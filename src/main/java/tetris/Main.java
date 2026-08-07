@@ -26,7 +26,7 @@ import javafx.util.Duration;
 public class Main extends Application {
 
     /* ------------------------------------------------------------------ */
-    /*  Fixed settings - never change while the game is running           */
+    /*  Settings never changed while game = running                       */
     /* ------------------------------------------------------------------ */
 
     private static final int CELL_SIZE = 25;
