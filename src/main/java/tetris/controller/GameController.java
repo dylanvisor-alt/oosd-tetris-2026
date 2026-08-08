@@ -1,10 +1,10 @@
-package com.oosd.tetris.controller;
+package tetris.controller;
 
-import com.oosd.tetris.model.Board;
-import com.oosd.tetris.model.GameState;
-import com.oosd.tetris.model.Tetromino;
-import com.oosd.tetris.model.TetrominoFactory;
-import com.oosd.tetris.ui.GameScreen;
+import tetris.model.Board;
+import tetris.model.GameState;
+import tetris.model.Tetromino;
+import tetris.model.TetrominoFactory;
+import tetris.ui.GameScreen;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.input.KeyCode;
@@ -12,7 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-/**
+/*
  * Owns the gameplay state and rules. GameScreen only draws the values it receives.
  */
 public class GameController {

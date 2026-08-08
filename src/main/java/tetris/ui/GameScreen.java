@@ -1,7 +1,7 @@
-package com.oosd.tetris.ui;
+package tetris.ui;
 
-import com.oosd.tetris.model.Board;
-import com.oosd.tetris.model.Tetromino;
+import tetris.model.Board;
+import tetris.model.Tetromino;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -169,7 +169,7 @@ public class GameScreen {
         return pieceView;
     }
 
-    /** Animates the already-rendered piece one row; the controller updates its model when it finishes. */
+    /* Animates the already-rendered piece one row; the controller updates its model when it finishes. */
     public void animateActivePieceDown(Runnable onFinished) {
         if (activePieceView == null) {
             onFinished.run();

@@ -1,4 +1,4 @@
-package com.oosd.tetris.model;
+package tetris.model;
 
 import javafx.scene.paint.Color;
 

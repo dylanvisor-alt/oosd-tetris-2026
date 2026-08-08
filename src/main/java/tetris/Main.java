@@ -1,12 +1,12 @@
-package com.oosd.tetris;
+package tetris;
 
-import com.oosd.tetris.controller.GameController;
-import com.oosd.tetris.ui.GameScreen;
+import tetris.controller.GameController;
+import tetris.ui.GameScreen;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/** Starts the application. Game rules live in GameController and JavaFX drawing lives in GameScreen. */
+/* Starts the application. Game rules live in GameController and JavaFX drawing lives in GameScreen. */
 public class Main extends Application {
 
     @Override

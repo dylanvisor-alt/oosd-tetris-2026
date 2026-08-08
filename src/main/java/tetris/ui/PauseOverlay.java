@@ -1,4 +1,4 @@
-package com.oosd.tetris.ui;
+package tetris.ui;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
