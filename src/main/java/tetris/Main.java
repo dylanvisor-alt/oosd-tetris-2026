@@ -80,8 +80,8 @@ public class Main extends Application {
 
         VBox sidebar = new VBox(10, scoreLabel, statusLabel);
         sidebar.setPadding(new Insets(10));
-        sidebar.setMinWidth(100);
-        sidebar.setPrefWidth(100);
+        sidebar.setMinWidth(120);
+        sidebar.setPrefWidth(120);
 
         BorderPane root = new BorderPane();
         root.setCenter(grid);
@@ -98,7 +98,6 @@ public class Main extends Application {
         primaryStage.show();
 
         // repeating timer that drives gravity - fires tick() every TICK_RATE
-
         timeline = new Timeline(new KeyFrame(TICK_RATE, e -> tick()));
         timeline.setCycleCount(Timeline.INDEFINITE);
 
