@@ -7,8 +7,8 @@ public class TPiece extends Tetromino {
 
     private int rotationState = 0;
 
-    public TPiece(int startX, int startY, Color color) {
-        super(startX, startY, color);
+    public TPiece(int startX, int startY, Color colour) {
+        super(startX, startY, colour);
     }
 
     @Override

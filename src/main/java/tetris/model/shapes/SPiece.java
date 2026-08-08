@@ -7,8 +7,8 @@ public class SPiece extends Tetromino {
 
     private int rotationState = 0;
 
-    public SPiece(int startX, int startY, Color color) {
-        super(startX, startY, color);
+    public SPiece(int startX, int startY, Color colour) {
+        super(startX, startY, colour);
     }
 
     @Override

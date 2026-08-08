@@ -5,8 +5,8 @@ import javafx.scene.paint.Color;
 
 public class OPiece extends Tetromino {
 
-    public OPiece(int startX, int startY, Color color) {
-        super(startX, startY, color);
+    public OPiece(int startX, int startY, Color colour) {
+        super(startX, startY, colour);
     }
 
     @Override

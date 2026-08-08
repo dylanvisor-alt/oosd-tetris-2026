@@ -2,20 +2,24 @@ package tetris.model;
 
 import javafx.scene.paint.Color;
 
-public abstract class Tetromino implements Movable {
+/* -------------------------------------------------------------------- */
+/*  abstract base class for every piece type                           */
+/* -------------------------------------------------------------------- */
 
-    // abstract base class for every piece type. Holds the shared position/colour
-    // data and the moveDown() behaviour that's identical for all shapes.
-    // subclasses (TPiece, IPiece, etc.) must supply their own rotate() and getShape().
+// holds the shared position/colour data and the moveDown() behaviour
+// that's identical for all shapes. subclasses (TPiece, IPiece, etc.)
+// must supply their own rotate() and getShape()
+
+public abstract class Tetromino implements Movable {
 
     protected int x;
     protected int y;
-    protected Color color;
+    protected Color colour;
 
     public Tetromino(int startX, int startY, Color color) {
         this.x = startX;
         this.y = startY;
-        this.color = color;
+        this.colour = color;
     }
 
     public int getX() {
@@ -27,18 +31,18 @@ public abstract class Tetromino implements Movable {
     }
 
     public Color getColor() {
-        return color;
+        return colour;
     }
 
-    // no implementation here on purpose - each shape rotates differently
     @Override
     public void moveDown() {
         y++;
     }
 
-    // each shape returns its own grid of 1s/0s describing its blocks
+    // no implementation here on purpose - each shape rotates differently
     @Override
     public abstract void rotate();
 
+    // each shape returns its own grid of 1s/0s describing its blocks
     public abstract int[][] getShape();
 }
