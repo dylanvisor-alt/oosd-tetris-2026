@@ -1,12 +1,12 @@
-package com.oosd.tetris.model;
+package tetris.model;
 
-import com.oosd.tetris.model.shapes.IPiece;
-import com.oosd.tetris.model.shapes.JPiece;
-import com.oosd.tetris.model.shapes.LPiece;
-import com.oosd.tetris.model.shapes.OPiece;
-import com.oosd.tetris.model.shapes.SPiece;
-import com.oosd.tetris.model.shapes.TPiece;
-import com.oosd.tetris.model.shapes.ZPiece;
+import tetris.model.shapes.IPiece;
+import tetris.model.shapes.JPiece;
+import tetris.model.shapes.LPiece;
+import tetris.model.shapes.OPiece;
+import tetris.model.shapes.SPiece;
+import tetris.model.shapes.TPiece;
+import tetris.model.shapes.ZPiece;
 import javafx.scene.paint.Color;
 
 import java.util.Random;

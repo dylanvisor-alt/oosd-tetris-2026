@@ -1,6 +1,6 @@
-package com.oosd.tetris.model.shapes;
+package tetris.model.shapes;
 
-import com.oosd.tetris.model.Tetromino;
+import tetris.model.Tetromino;
 import javafx.scene.paint.Color;
 
 // the straight/long piece - only has 2 visually distinct rotations (horizontal and vertical), unlike most other shapes which have 4.

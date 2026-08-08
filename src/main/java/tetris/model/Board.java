@@ -1,4 +1,4 @@
-package com.oosd.tetris.model;
+package tetris.model;
 
 public class Board {
 

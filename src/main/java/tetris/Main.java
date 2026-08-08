@@ -1,9 +1,9 @@
-package com.oosd.tetris;
+package tetris;
 
-import com.oosd.tetris.model.Board;
-import com.oosd.tetris.model.GameState;
-import com.oosd.tetris.model.Tetromino;
-import com.oosd.tetris.model.TetrominoFactory;
+import tetris.model.Board;
+import tetris.model.GameState;
+import tetris.model.Tetromino;
+import tetris.model.TetrominoFactory;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
