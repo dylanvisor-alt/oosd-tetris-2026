@@ -2,7 +2,6 @@ package tetris.ui;
 
 import tetris.model.Board;
 import tetris.model.Tetromino;
-import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 /*
  * JavaFX view for gameplay. It draws state given by GameController but does not
@@ -39,7 +37,6 @@ public class GameScreen {
     private final Label statusLabel = new Label();
 
     private Group activePieceView;
-    private TranslateTransition activeDropAnimation;
 
     public GameScreen() {
         GridPane lockedGrid = createLockedGrid();
@@ -169,31 +166,10 @@ public class GameScreen {
         return pieceView;
     }
 
-    /* Animates the already-rendered piece one row; the controller updates its model when it finishes. */
-    public void animateActivePieceDown(Runnable onFinished) {
-        if (activePieceView == null) {
-            onFinished.run();
-            return;
-        }
-
-        activeDropAnimation = new TranslateTransition(Duration.millis(180), activePieceView);
-        activeDropAnimation.setByY(CELL_SIZE);
-        activeDropAnimation.setOnFinished(event -> {
-            activeDropAnimation = null;
-            onFinished.run();
-        });
-        activeDropAnimation.play();
-    }
-
-    public void pauseActiveAnimation() {
-        if (activeDropAnimation != null) {
-            activeDropAnimation.pause();
-        }
-    }
-
-    public void resumeActiveAnimation() {
-        if (activeDropAnimation != null) {
-            activeDropAnimation.play();
+    /** Moves only the falling piece between its two logical board rows. */
+    public void setActivePieceVerticalOffset(double pixelOffset) {
+        if (activePieceView != null) {
+            activePieceView.setTranslateY(pixelOffset);
         }
     }
 }

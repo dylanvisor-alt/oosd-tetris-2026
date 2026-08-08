@@ -5,63 +5,100 @@ import tetris.model.GameState;
 import tetris.model.Tetromino;
 import tetris.model.TetrominoFactory;
 import tetris.ui.GameScreen;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 /*
  * Owns the gameplay state and rules. GameScreen only draws the values it receives.
  */
 public class GameController {
 
-    private static final Duration GRAVITY_INTERVAL = Duration.millis(333);
+    private static final long GRAVITY_INTERVAL_NANOS = 333_000_000L;
+    private static final long MAX_FRAME_DELTA_NANOS = 50_000_000L;
 
     private final Board board = new Board();
     private final GameScreen gameScreen;
     private final Color[][] lockedColors = new Color[Board.HEIGHT][Board.WIDTH];
-    private final Timeline gravityTimeline;
+    private final AnimationTimer gravityTimer;
 
     private Tetromino currentPiece;
     private GameState gameState = GameState.RUNNING;
     private int score;
-    private boolean dropAnimationRunning;
+    private long lastFrameTimeNanos;
+    private long accumulatedFallNanos;
 
     public GameController(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
-        gravityTimeline = new Timeline(new KeyFrame(GRAVITY_INTERVAL, event -> startGravityStep()));
-        gravityTimeline.setCycleCount(Timeline.INDEFINITE);
+        gravityTimer = new AnimationTimer() {
+            @Override
+            public void handle(long currentTimeNanos) {
+                updateGravity(currentTimeNanos);
+            }
+        };
     }
 
     public void startGame() {
         gameScreen.setKeyHandler(this::handleKeyPress);
         spawnPiece();
         render();
-        gravityTimeline.play();
+        if (gameState == GameState.RUNNING) {
+            gravityTimer.start();
+        }
         gameScreen.requestKeyboardFocus();
     }
 
-    private void startGravityStep() {
-        if (gameState != GameState.RUNNING || dropAnimationRunning) {
+    /**
+     * Moves only the active JavaFX node between logical board rows. The Board
+     * model changes once each 333 ms, while keyboard input remains available
+     * on every frame.
+     */
+    private void updateGravity(long currentTimeNanos) {
+        if (gameState != GameState.RUNNING || currentPiece == null) {
             return;
         }
 
-        if (board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY() + 1)) {
-            animateGravityDrop();
-        } else {
-            lockClearAndSpawn();
+        if (lastFrameTimeNanos == 0) {
+            lastFrameTimeNanos = currentTimeNanos;
+            return;
         }
+
+        long frameDelta = Math.min(
+                currentTimeNanos - lastFrameTimeNanos,
+                MAX_FRAME_DELTA_NANOS
+        );
+        lastFrameTimeNanos = currentTimeNanos;
+
+        if (!canCurrentPieceFall()) {
+            lockClearAndSpawn();
+            render();
+            return;
+        }
+
+        accumulatedFallNanos += frameDelta;
+        if (accumulatedFallNanos >= GRAVITY_INTERVAL_NANOS) {
+            currentPiece.moveDown();
+            accumulatedFallNanos -= GRAVITY_INTERVAL_NANOS;
+
+            if (!canCurrentPieceFall()) {
+                accumulatedFallNanos = 0;
+                lockClearAndSpawn();
+                render();
+                return;
+            }
+
+            // Re-anchor the JavaFX piece at its new logical row. This happens
+            // only three times per second; per-frame updates remain one translate.
+            render();
+        }
+
+        double fallProgress = accumulatedFallNanos / (double) GRAVITY_INTERVAL_NANOS;
+        gameScreen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 
-    private void animateGravityDrop() {
-        dropAnimationRunning = true;
-        gameScreen.animateActivePieceDown(() -> {
-            currentPiece.moveDown();
-            dropAnimationRunning = false;
-            render();
-        });
+    private boolean canCurrentPieceFall() {
+        return board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY() + 1);
     }
 
     private void handleKeyPress(KeyEvent event) {
@@ -70,7 +107,7 @@ public class GameController {
             return;
         }
 
-        if (gameState != GameState.RUNNING || dropAnimationRunning) {
+        if (gameState != GameState.RUNNING) {
             return;
         }
 
@@ -84,6 +121,8 @@ public class GameController {
                 return;
             }
         }
+
+        resetFallProgressIfBlocked();
         render();
     }
 
@@ -98,8 +137,9 @@ public class GameController {
     }
 
     private void softDrop() {
-        if (board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY() + 1)) {
+        if (canCurrentPieceFall()) {
             currentPiece.moveDown();
+            accumulatedFallNanos = 0;
         } else {
             lockClearAndSpawn();
         }
@@ -109,7 +149,14 @@ public class GameController {
         while (board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY() + 1)) {
             currentPiece.moveDown();
         }
+        accumulatedFallNanos = 0;
         lockClearAndSpawn();
+    }
+
+    private void resetFallProgressIfBlocked() {
+        if (!canCurrentPieceFall()) {
+            accumulatedFallNanos = 0;
+        }
     }
 
     private void tryRotate() {
@@ -192,9 +239,11 @@ public class GameController {
 
     private void spawnPiece() {
         currentPiece = TetrominoFactory.createRandomPiece();
+        accumulatedFallNanos = 0;
+        lastFrameTimeNanos = 0;
         if (!board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY())) {
             gameState = GameState.GAME_OVER;
-            gravityTimeline.stop();
+            gravityTimer.stop();
             gameScreen.showStatus("GAME OVER");
         }
     }
@@ -202,14 +251,13 @@ public class GameController {
     private void togglePause() {
         if (gameState == GameState.RUNNING) {
             gameState = GameState.PAUSED;
-            gravityTimeline.pause();
-            gameScreen.pauseActiveAnimation();
+            gravityTimer.stop();
+            lastFrameTimeNanos = 0;
             gameScreen.showPauseOverlay(true);
             gameScreen.showStatus("Game paused");
         } else if (gameState == GameState.PAUSED) {
             gameState = GameState.RUNNING;
-            gravityTimeline.play();
-            gameScreen.resumeActiveAnimation();
+            gravityTimer.start();
             gameScreen.showPauseOverlay(false);
             gameScreen.showStatus("");
         }
@@ -217,5 +265,7 @@ public class GameController {
 
     private void render() {
         gameScreen.render(board, lockedColors, currentPiece);
+        double fallProgress = accumulatedFallNanos / (double) GRAVITY_INTERVAL_NANOS;
+        gameScreen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 }
