@@ -8,6 +8,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -15,8 +16,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -24,11 +25,17 @@ import javafx.util.Duration;
 
 public class Main extends Application {
 
+    /* -------------------------------------------------------------------- */
+    /*  settings never changed while game = running                         */
+    /* -------------------------------------------------------------------- */
     private static final int CELL_SIZE = 25;
     private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
     private static final Color LOCKED_COLOR = Color.web("#007aff");
     private static final Duration TICK_RATE = Duration.millis(333); // gravity speed
 
+    /* -------------------------------------------------------------------- */
+    /*  game state - changes constantly while playing                       */
+    /* -------------------------------------------------------------------- */
     private final Board board = new Board();
 
     private Rectangle[][] cellViews; // lets us recolour any board square directly
@@ -41,9 +48,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        /* -------------------------------------------------------------------- */
+        /*  build the empty board grid                                          */
+        /* -------------------------------------------------------------------- */
         GridPane grid = new GridPane();
         cellViews = new Rectangle[Board.HEIGHT][Board.WIDTH];
-
 
         // fix: fixed row/column sizing - prevents javafx from clipping last row
         for (int row = 0; row < Board.HEIGHT; row++) {
@@ -73,19 +83,27 @@ public class Main extends Application {
         grid.setPrefSize(gridWidth, gridHeight);
         grid.setMaxSize(gridWidth, gridHeight);
 
+        /* -------------------------------------------------------------------- */
+        /*  bottom bar - score and status side by side                          */
+        /* -------------------------------------------------------------------- */
         scoreLabel = new Label("Score: 0");
         scoreLabel.setTextFill(Color.WHITE);
+
         statusLabel = new Label();
         statusLabel.setTextFill(Color.web("#e91e63"));
+        statusLabel.setStyle("-fx-font-weight: bold;");
 
-        VBox sidebar = new VBox(10, scoreLabel, statusLabel);
-        sidebar.setPadding(new Insets(10));
-        sidebar.setMinWidth(120);
-        sidebar.setPrefWidth(120);
+        HBox bottomBar = new HBox(20, scoreLabel, statusLabel);
+        bottomBar.setAlignment(Pos.CENTER);
+        bottomBar.setPadding(new Insets(8));
+        bottomBar.setStyle("-fx-background-color: #1a1a1a;");
 
+        /* -------------------------------------------------------------------- */
+        /*  put the board and bottom bar into one window                        */
+        /* -------------------------------------------------------------------- */
         BorderPane root = new BorderPane();
         root.setCenter(grid);
-        root.setRight(sidebar);
+        root.setBottom(bottomBar);
         root.setStyle("-fx-background-color: #121212;");
 
         Scene scene = new Scene(root);
@@ -97,6 +115,9 @@ public class Main extends Application {
         primaryStage.sizeToScene();
         primaryStage.show();
 
+        /* -------------------------------------------------------------------- */
+        /*  start the game                                                      */
+        /* -------------------------------------------------------------------- */
         // repeating timer that drives gravity - fires tick() every TICK_RATE
         timeline = new Timeline(new KeyFrame(TICK_RATE, e -> tick()));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -106,6 +127,10 @@ public class Main extends Application {
         render();
         timeline.play();
     }
+
+    /* -------------------------------------------------------------------- */
+    /*  spawning and gravity                                                */
+    /* -------------------------------------------------------------------- */
 
     private void spawnPiece() {
         currentPiece = TetrominoFactory.createRandomPiece();
@@ -145,6 +170,10 @@ public class Main extends Application {
             default -> 0;
         };
     }
+
+    /* -------------------------------------------------------------------- */
+    /*  keyboard controls                                                   */
+    /* -------------------------------------------------------------------- */
 
     private void handleKeyPress(KeyEvent event) {
         if (event.getCode() == KeyCode.P && state != GameState.GAME_OVER) {
@@ -197,6 +226,10 @@ public class Main extends Application {
         lockAndClear();
     }
 
+    /* -------------------------------------------------------------------- */
+    /*  pause and game over                                                */
+    /* -------------------------------------------------------------------- */
+
     private void togglePause() {
         if (state == GameState.RUNNING) {
             state = GameState.PAUSED;
@@ -215,6 +248,10 @@ public class Main extends Application {
         statusLabel.setText("GAME OVER");
     }
 
+    /* -------------------------------------------------------------------- */
+    /*  drawing the board and piece on screen                              */
+    /* -------------------------------------------------------------------- */
+
     private void render() {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
@@ -230,9 +267,10 @@ public class Main extends Application {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col] == 1) {
+                    // convert shape-local coordinates into real board coordinates
                     int boardRow = piece.getY() + row;
                     int boardCol = piece.getX() + col;
-                    // convert shape-local coordinates into real board coordinates
+
                     if (boardRow >= 0 && boardRow < Board.HEIGHT
                             && boardCol >= 0 && boardCol < Board.WIDTH) {
                         cellViews[boardRow][boardCol].setFill(piece.getColor());
@@ -241,6 +279,10 @@ public class Main extends Application {
             }
         }
     }
+
+    /* -------------------------------------------------------------------- */
+    /*  entry point                                                        */
+    /* -------------------------------------------------------------------- */
 
     public static void main(String[] args) {
         launch(args);

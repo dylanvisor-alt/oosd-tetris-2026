@@ -3,13 +3,18 @@ package tetris.model.shapes;
 import tetris.model.Tetromino;
 import javafx.scene.paint.Color;
 
-// the straight/long piece - only has 2 visually distinct rotations (horizontal and vertical), unlike most other shapes which have 4.
+/* -------------------------------------------------------------------- */
+/*  the I-piece - the 4 grid straight one                              */
+/* -------------------------------------------------------------------- */
+
+// only has 2 visually distinct rotations (horizontal and vertical),
+// unlike most other shapes which have 4
 public class IPiece extends Tetromino {
 
     private int rotationState = 0;
 
-    public IPiece(int startX, int startY, Color colour) {
-        super(startX, startY, colour);
+    public IPiece(int startX, int startY, Color color) {
+        super(startX, startY, color);
     }
 
     @Override
@@ -20,7 +25,7 @@ public class IPiece extends Tetromino {
 
     @Override
     public void rotate() {
-        rotationState = (rotationState + 1) % 2; // I-piece only has 2 real states
+        rotationState = (rotationState + 1) % 2; // cycles 0 -> 1 -> 0 ...
     }
 
     @Override
