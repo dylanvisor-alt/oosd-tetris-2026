@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
  */
 public class GameController {
 
-    private static final long GRAVITY_INTERVAL_NANOS = 333_000_000L;
+    private static final long GRAVITY_INTERVAL_NANOS = 240_000_000L;
     private static final long MAX_FRAME_DELTA_NANOS = 50_000_000L;
 
     private final Board board = new Board();
@@ -51,8 +51,8 @@ public class GameController {
 
     /**
      * Moves only the active JavaFX node between logical board rows. The Board
-     * model changes once each 333 ms, while keyboard input remains available
-     * on every frame.
+     * model changes once each gravity interval, while keyboard input remains
+     * available on every frame.
      */
     private void updateGravity(long currentTimeNanos) {
         if (gameState != GameState.RUNNING || currentPiece == null) {
@@ -88,8 +88,8 @@ public class GameController {
                 return;
             }
 
-            // Re-anchor the JavaFX piece at its new logical row. This happens
-            // only three times per second; per-frame updates remain one translate.
+            // Re-anchor the JavaFX piece at its new logical row. Per-frame
+            // updates remain a single translate operation.
             render();
         }
 
