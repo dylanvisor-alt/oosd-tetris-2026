@@ -29,8 +29,8 @@ public class Main extends Application {
     /*  settings never changed while game = running                         */
     /* -------------------------------------------------------------------- */
     private static final int CELL_SIZE = 25;
-    private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
-    private static final Color LOCKED_COLOR = Color.web("#007aff");
+    private static final Color EMPTY_COLOUR = Color.web("#1e1e1e");
+    private static final Color LOCKED_COLOUR = Color.web("#007aff");
     private static final Duration TICK_RATE = Duration.millis(333); // gravity speed
 
     /* -------------------------------------------------------------------- */
@@ -70,7 +70,7 @@ public class Main extends Application {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
                 Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
-                cell.setFill(EMPTY_COLOR);
+                cell.setFill(EMPTY_COLOUR);
                 cell.setStroke(Color.web("#333333"));
                 cellViews[row][col] = cell;
                 grid.add(cell, col, row);
@@ -255,7 +255,7 @@ public class Main extends Application {
     private void render() {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
-                cellViews[row][col].setFill(board.isCellOccupied(row, col) ? LOCKED_COLOR : EMPTY_COLOR);
+                cellViews[row][col].setFill(board.isCellOccupied(row, col) ? LOCKED_COLOUR : EMPTY_COLOUR);
             }
         }
         drawPiece(currentPiece);

@@ -23,7 +23,7 @@ public class TetrominoFactory {
     private static final int SPAWN_X = 4;
     private static final int SPAWN_Y = 0;
 
-    private static final Color[] COLORS = {
+    private static final Color[] COLOURS = {
             Color.web("#00bcd4"), // cyan
             Color.web("#ffeb3b"), // yellow
             Color.web("#9c27b0"), // purple
@@ -35,17 +35,17 @@ public class TetrominoFactory {
 
     public static Tetromino createRandomPiece() {
         int choice = random.nextInt(7); // 0 to 6, one per shape
-        Color randomColor = COLORS[random.nextInt(COLORS.length)]; // independent of shape choice
+        Color randomColour = COLOURS[random.nextInt(COLOURS.length)]; // independent of shape choice
 
         return switch (choice) {
-            case 0 -> new IPiece(SPAWN_X, SPAWN_Y, randomColor);
-            case 1 -> new OPiece(SPAWN_X, SPAWN_Y, randomColor);
-            case 2 -> new TPiece(SPAWN_X, SPAWN_Y, randomColor);
-            case 3 -> new SPiece(SPAWN_X, SPAWN_Y, randomColor);
-            case 4 -> new ZPiece(SPAWN_X, SPAWN_Y, randomColor);
-            case 5 -> new JPiece(SPAWN_X, SPAWN_Y, randomColor);
-            case 6 -> new LPiece(SPAWN_X, SPAWN_Y, randomColor);
-            default -> new TPiece(SPAWN_X, SPAWN_Y, randomColor); // unreachable, but required by switch
+            case 0 -> new IPiece(SPAWN_X, SPAWN_Y, randomColour);
+            case 1 -> new OPiece(SPAWN_X, SPAWN_Y, randomColour);
+            case 2 -> new TPiece(SPAWN_X, SPAWN_Y, randomColour);
+            case 3 -> new SPiece(SPAWN_X, SPAWN_Y, randomColour);
+            case 4 -> new ZPiece(SPAWN_X, SPAWN_Y, randomColour);
+            case 5 -> new JPiece(SPAWN_X, SPAWN_Y, randomColour);
+            case 6 -> new LPiece(SPAWN_X, SPAWN_Y, randomColour);
+            default -> new TPiece(SPAWN_X, SPAWN_Y, randomColour); // unreachable, but required by switch
         };
     }
 }

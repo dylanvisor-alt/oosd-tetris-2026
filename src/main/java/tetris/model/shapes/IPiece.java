@@ -13,8 +13,8 @@ public class IPiece extends Tetromino {
 
     private int rotationState = 0;
 
-    public IPiece(int startX, int startY, Color color) {
-        super(startX, startY, color);
+    public IPiece(int startX, int startY, Color colour) {
+        super(startX, startY, colour);
     }
 
     @Override

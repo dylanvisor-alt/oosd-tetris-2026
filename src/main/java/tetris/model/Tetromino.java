@@ -9,16 +9,17 @@ import javafx.scene.paint.Color;
 // holds the shared position/colour data and the moveDown() behaviour
 // that's identical for all shapes. subclasses (TPiece, IPiece, etc.)
 // must supply their own rotate() and getShape()
+
 public abstract class Tetromino implements Movable {
 
     protected int x;
     protected int y;
-    protected Color color;
+    protected Color colour;
 
     public Tetromino(int startX, int startY, Color color) {
         this.x = startX;
         this.y = startY;
-        this.color = color;
+        this.colour = color;
     }
 
     public int getX() {
@@ -30,7 +31,7 @@ public abstract class Tetromino implements Movable {
     }
 
     public Color getColor() {
-        return color;
+        return colour;
     }
 
     @Override
