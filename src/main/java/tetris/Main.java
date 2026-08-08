@@ -25,19 +25,17 @@ import javafx.util.Duration;
 
 public class Main extends Application {
 
-    /* ------------------------------------------------------------------ */
-    /*  Settings never changed while game = running                       */
-    /* ------------------------------------------------------------------ */
-
+    /* -------------------------------------------------------------------- */
+    /*  settings never changed while game = running                         */
+    /* -------------------------------------------------------------------- */
     private static final int CELL_SIZE = 25;
-    private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
-    private static final Color LOCKED_COLOR = Color.web("#007aff");
+    private static final Color EMPTY_COLOUR = Color.web("#1e1e1e");
+    private static final Color LOCKED_COLOUR = Color.web("#007aff");
     private static final Duration TICK_RATE = Duration.millis(333); // gravity speed
 
-    /* ------------------------------------------------------------------ */
-    /*  Game state - changes constantly while playing                     */
-    /* ------------------------------------------------------------------ */
-
+    /* -------------------------------------------------------------------- */
+    /*  game state - changes constantly while playing                       */
+    /* -------------------------------------------------------------------- */
     private final Board board = new Board();
 
     private Rectangle[][] cellViews; // lets us recolour any board square directly
@@ -48,35 +46,16 @@ public class Main extends Application {
     private Label scoreLabel;
     private Label statusLabel;
 
-    /* ------------------------------------------------------------------ */
-    /*  App startup                                                       */
-    /* ------------------------------------------------------------------ */
-
     @Override
     public void start(Stage primaryStage) {
-        GridPane grid = buildBoardGrid();
-        HBox bottomBar = buildBottomBar();
-        Scene scene = buildScene(grid, bottomBar);
 
-        primaryStage.setTitle("Tetris - 2006ICT");
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.sizeToScene();
-        primaryStage.show();
-
-        startGameLoop();
-    }
-
-    /* ------------------------------------------------------------------ */
-    /*  UI construction                                                   */
-    /* ------------------------------------------------------------------ */
-
-    private GridPane buildBoardGrid() {
+        /* -------------------------------------------------------------------- */
+        /*  build the empty board grid                                          */
+        /* -------------------------------------------------------------------- */
         GridPane grid = new GridPane();
         cellViews = new Rectangle[Board.HEIGHT][Board.WIDTH];
 
-        // fixed row/column sizing - prevents javafx from clipping the last row
-
+        // fix: fixed row/column sizing - prevents javafx from clipping last row
         for (int row = 0; row < Board.HEIGHT; row++) {
             RowConstraints rowConstraints = new RowConstraints(CELL_SIZE);
             rowConstraints.setFillHeight(false);
@@ -91,7 +70,7 @@ public class Main extends Application {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
                 Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
-                cell.setFill(EMPTY_COLOR);
+                cell.setFill(EMPTY_COLOUR);
                 cell.setStroke(Color.web("#333333"));
                 cellViews[row][col] = cell;
                 grid.add(cell, col, row);
@@ -104,13 +83,9 @@ public class Main extends Application {
         grid.setPrefSize(gridWidth, gridHeight);
         grid.setMaxSize(gridWidth, gridHeight);
 
-        return grid;
-    }
-
-    // Score and status now share one bar along the bottom of the window
-    // instead of being split between a side sidebar and a separate bar.
-
-    private HBox buildBottomBar() {
+        /* -------------------------------------------------------------------- */
+        /*  bottom bar - score and status side by side                          */
+        /* -------------------------------------------------------------------- */
         scoreLabel = new Label("Score: 0");
         scoreLabel.setTextFill(Color.WHITE);
 
@@ -118,22 +93,14 @@ public class Main extends Application {
         statusLabel.setTextFill(Color.web("#e91e63"));
         statusLabel.setStyle("-fx-font-weight: bold;");
 
-        // Enhanced for-loop: apply the shared font size to every label in
-        // this bar without repeating the same setStyle call per label.
-
-        Label[] bottomLabels = { scoreLabel, statusLabel };
-        for (Label label : bottomLabels) {
-            label.setStyle(label.getStyle() + "-fx-font-size: 14px;");
-        }
-
         HBox bottomBar = new HBox(20, scoreLabel, statusLabel);
         bottomBar.setAlignment(Pos.CENTER);
         bottomBar.setPadding(new Insets(8));
-        bottomBar.setStyle(bottomBar.getStyle() + "-fx-background-color: #1a1a1a;");
-        return bottomBar;
-    }
+        bottomBar.setStyle("-fx-background-color: #1a1a1a;");
 
-    private Scene buildScene(GridPane grid, HBox bottomBar) {
+        /* -------------------------------------------------------------------- */
+        /*  put the board and bottom bar into one window                        */
+        /* -------------------------------------------------------------------- */
         BorderPane root = new BorderPane();
         root.setCenter(grid);
         root.setBottom(bottomBar);
@@ -141,14 +108,17 @@ public class Main extends Application {
 
         Scene scene = new Scene(root);
         scene.setOnKeyPressed(this::handleKeyPress);
-        return scene;
-    }
 
-    /* ------------------------------------------------------------------ */
-    /*  Game loop                                                         */
-    /* ------------------------------------------------------------------ */
+        primaryStage.setTitle("Tetris - 2006ICT");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.sizeToScene();
+        primaryStage.show();
 
-    private void startGameLoop() {
+        /* -------------------------------------------------------------------- */
+        /*  start the game                                                      */
+        /* -------------------------------------------------------------------- */
+        // repeating timer that drives gravity - fires tick() every TICK_RATE
         timeline = new Timeline(new KeyFrame(TICK_RATE, e -> tick()));
         timeline.setCycleCount(Timeline.INDEFINITE);
 
@@ -157,6 +127,10 @@ public class Main extends Application {
         render();
         timeline.play();
     }
+
+    /* -------------------------------------------------------------------- */
+    /*  spawning and gravity                                                */
+    /* -------------------------------------------------------------------- */
 
     private void spawnPiece() {
         currentPiece = TetrominoFactory.createRandomPiece();
@@ -197,9 +171,9 @@ public class Main extends Application {
         };
     }
 
-    /* ------------------------------------------------------------------ */
-    /*  Input handling                                                    */
-    /* ------------------------------------------------------------------ */
+    /* -------------------------------------------------------------------- */
+    /*  keyboard controls                                                   */
+    /* -------------------------------------------------------------------- */
 
     private void handleKeyPress(KeyEvent event) {
         if (event.getCode() == KeyCode.P && state != GameState.GAME_OVER) {
@@ -211,8 +185,16 @@ public class Main extends Application {
         }
 
         switch (event.getCode()) {
-            case LEFT -> tryMove(-1, 0, currentPiece::moveLeft);
-            case RIGHT -> tryMove(1, 0, currentPiece::moveRight);
+            case LEFT -> {
+                if (board.canPlace(currentPiece, currentPiece.getX() - 1, currentPiece.getY())) {
+                    currentPiece.moveLeft();
+                }
+            }
+            case RIGHT -> {
+                if (board.canPlace(currentPiece, currentPiece.getX() + 1, currentPiece.getY())) {
+                    currentPiece.moveRight();
+                }
+            }
             case DOWN -> {
                 if (board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY() + 1)) {
                     currentPiece.moveDown();
@@ -225,15 +207,6 @@ public class Main extends Application {
             default -> { }
         }
         render();
-    }
-
-    // Checks if moving by (dx, dy) is legal, and only runs moveAction if so.
-    // Lets LEFT/RIGHT share one "check then act" pattern instead of repeating it.
-
-    private void tryMove(int dx, int dy, Runnable moveAction) {
-        if (board.canPlace(currentPiece, currentPiece.getX() + dx, currentPiece.getY() + dy)) {
-            moveAction.run();
-        }
     }
 
     private void tryRotate() {
@@ -253,9 +226,9 @@ public class Main extends Application {
         lockAndClear();
     }
 
-    /* ------------------------------------------------------------------ */
-    /*  Game state transitions                                            */
-    /* ------------------------------------------------------------------ */
+    /* -------------------------------------------------------------------- */
+    /*  pause and game over                                                */
+    /* -------------------------------------------------------------------- */
 
     private void togglePause() {
         if (state == GameState.RUNNING) {
@@ -275,14 +248,14 @@ public class Main extends Application {
         statusLabel.setText("GAME OVER");
     }
 
-    /* ------------------------------------------------------------------ */
-    /*  Rendering                                                         */
-    /* ------------------------------------------------------------------ */
+    /* -------------------------------------------------------------------- */
+    /*  drawing the board and piece on screen                              */
+    /* -------------------------------------------------------------------- */
 
     private void render() {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
-                cellViews[row][col].setFill(board.isCellOccupied(row, col) ? LOCKED_COLOR : EMPTY_COLOR);
+                cellViews[row][col].setFill(board.isCellOccupied(row, col) ? LOCKED_COLOUR : EMPTY_COLOUR);
             }
         }
         drawPiece(currentPiece);
@@ -307,9 +280,9 @@ public class Main extends Application {
         }
     }
 
-    /* ------------------------------------------------------------------ */
-    /*  Entry point                                                       */
-    /* ------------------------------------------------------------------ */
+    /* -------------------------------------------------------------------- */
+    /*  entry point                                                        */
+    /* -------------------------------------------------------------------- */
 
     public static void main(String[] args) {
         launch(args);

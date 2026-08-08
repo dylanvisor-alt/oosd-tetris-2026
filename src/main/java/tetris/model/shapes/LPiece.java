@@ -7,8 +7,8 @@ public class LPiece extends Tetromino {
 
     private int rotationState = 0;
 
-    public LPiece(int startX, int startY, Color color) {
-        super(startX, startY, color);
+    public LPiece(int startX, int startY, Color colour) {
+        super(startX, startY, colour);
     }
 
     @Override
