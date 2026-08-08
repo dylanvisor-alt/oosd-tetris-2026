@@ -32,6 +32,32 @@
     -fx-text-fill: #94a3b8;
 }
 
+.screen-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #60a5fa;
+}
+
+.score-table {
+    -fx-background-color: rgba(15, 23, 42, 0.72);
+    -fx-background-radius: 10;
+    -fx-border-color: #334155;
+    -fx-border-radius: 10;
+}
+
+.score-header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #93c5fd;
+    -fx-alignment: center;
+}
+
+.score-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #e2e8f0;
+    -fx-alignment: center;
+}
+
 .progress-indicator {
     -fx-progress-color: #60a5fa;
 }
