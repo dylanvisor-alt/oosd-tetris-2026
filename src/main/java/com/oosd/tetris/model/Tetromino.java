@@ -10,12 +10,12 @@ public abstract class Tetromino implements Movable {
 
     protected int x;
     protected int y;
-    protected Color color;
+    protected Color colour;
 
-    public Tetromino(int startX, int startY, Color color) {
+    public Tetromino(int startX, int startY, Color colour) {
         this.x = startX;
         this.y = startY;
-        this.color = color;
+        this.colour = colour;
     }
 
     public int getX() {
@@ -27,7 +27,7 @@ public abstract class Tetromino implements Movable {
     }
 
     public Color getColor() {
-        return color;
+        return colour;
     }
 
     // no implementation here on purpose - each shape rotates differently

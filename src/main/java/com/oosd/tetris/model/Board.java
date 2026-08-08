@@ -69,6 +69,7 @@ public class Board {
 
     // scans from the bottom up, removing any fully filled rows.
     // returns how many rows were cleared, used for scoring.
+
     public int clearFullRows() {
         int clearedCount = 0;
 

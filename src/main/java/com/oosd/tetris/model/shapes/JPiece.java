@@ -7,8 +7,8 @@ public class JPiece extends Tetromino {
 
     private int rotationState = 0;
 
-    public JPiece(int startX, int startY, Color color) {
-        super(startX, startY, color);
+    public JPiece(int startX, int startY, Color colour) {
+        super(startX, startY, colour);
     }
 
     @Override

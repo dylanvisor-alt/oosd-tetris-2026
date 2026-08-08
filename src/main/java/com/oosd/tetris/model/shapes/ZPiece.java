@@ -7,8 +7,8 @@ public class ZPiece extends Tetromino {
 
     private int rotationState = 0;
 
-    public ZPiece(int startX, int startY, Color color) {
-        super(startX, startY, color);
+    public ZPiece(int startX, int startY, Color colour) {
+        super(startX, startY, colour);
     }
 
     @Override
@@ -19,7 +19,7 @@ public class ZPiece extends Tetromino {
 
     @Override
     public void rotate() {
-        rotationState = (rotationState + 1) % 2; // Z-piece has 2 distinct states
+        rotationState = (rotationState + 1) % 2; // z-piece has 2 distinct states
     }
 
     @Override
