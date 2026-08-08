@@ -1,0 +1,61 @@
+.root {
+    -fx-font-family: "Arial";
+}
+
+.app-background {
+    -fx-background-color: linear-gradient(to bottom, #111827, #070b14);
+}
+
+.menu-panel {
+    -fx-background-color: rgba(23, 32, 51, 0.94);
+    -fx-background-radius: 18;
+    -fx-border-color: #334155;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 24, 0.25, 0, 8);
+}
+
+.game-title {
+    -fx-font-size: 52px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #60a5fa;
+}
+
+.subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #cbd5e1;
+    -fx-padding: 0 0 20 0;
+}
+
+.splash-loading {
+    -fx-font-size: 13px;
+    -fx-text-fill: #94a3b8;
+}
+
+.progress-indicator {
+    -fx-progress-color: #60a5fa;
+}
+
+.menu-button {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 9;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 18;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #3b82f6;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+.menu-button:disabled {
+    -fx-background-color: #334155;
+    -fx-text-fill: #94a3b8;
+    -fx-opacity: 0.75;
+}

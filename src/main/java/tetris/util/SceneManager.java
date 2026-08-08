@@ -4,6 +4,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -14,6 +15,8 @@ import java.util.Objects;
  * depend on the game model.</p>
  */
 public final class SceneManager {
+
+    private static final String STYLESHEET_PATH = "/tetris/styles/style.css";
 
     private final Stage primaryStage;
     private Scene scene;
@@ -28,6 +31,7 @@ public final class SceneManager {
 
         if (scene == null) {
             scene = new Scene(screenRoot);
+            addSharedStylesheet();
             primaryStage.setScene(scene);
         } else {
             scene.setRoot(screenRoot);
@@ -38,5 +42,12 @@ public final class SceneManager {
             primaryStage.show();
         }
         screenRoot.requestFocus();
+    }
+
+    private void addSharedStylesheet() {
+        URL stylesheet = SceneManager.class.getResource(STYLESHEET_PATH);
+        if (stylesheet != null) {
+            scene.getStylesheets().add(stylesheet.toExternalForm());
+        }
     }
 }
