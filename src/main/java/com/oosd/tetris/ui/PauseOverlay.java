@@ -6,7 +6,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-/** A reusable overlay shown above the board while gameplay is paused. */
+/* A reusable overlay shown above the board while gameplay is paused. */
 public class PauseOverlay extends StackPane {
 
     public PauseOverlay() {

@@ -20,10 +20,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-/**
+/*
  * JavaFX view for gameplay. It draws state given by GameController but does not
  * decide whether a move is legal or change the Board.
  */
+
 public class GameScreen {
 
     public static final int CELL_SIZE = 25;
