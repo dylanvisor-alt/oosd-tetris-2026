@@ -11,7 +11,8 @@ import javafx.util.Duration;
 
 import java.util.Objects;
 
-/** Displays a short loading screen before the main menu. */
+/* Displays a short loading screen before the main menu. */
+
 public class SplashScreen {
 
     private static final Duration DISPLAY_TIME = Duration.seconds(3);
@@ -44,7 +45,7 @@ public class SplashScreen {
         return root;
     }
 
-    /** Starts the non-blocking delay, then asks Main to navigate to the menu. */
+    /* Starts the non-blocking delay, then asks Main to navigate to the menu. */
     public void start(Runnable onFinished) {
         Objects.requireNonNull(onFinished, "onFinished");
         displayDelay.stop();

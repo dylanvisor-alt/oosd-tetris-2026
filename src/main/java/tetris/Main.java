@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /* Starts the application. Game rules live in GameController and JavaFX drawing lives in GameScreen. */
+
 public class Main extends Application {
 
     private SceneManager sceneManager;

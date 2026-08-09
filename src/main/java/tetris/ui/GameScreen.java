@@ -11,6 +11,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
@@ -18,14 +19,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-/*
- * JavaFX view for gameplay. It draws state given by GameController but does not
- * decide whether a move is legal or change the Board.
- */
+/* -------------------------------------------------------------------- */
+/*  javafx view for gameplay - draws state given by GameController      */
+/*  but does not decide whether a move is legal or change the Board     */
+/* -------------------------------------------------------------------- */
 
 public class GameScreen {
 
-    public static final int CELL_SIZE = 25;
+    public static final int CELL_SIZE = 30;
     private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
     private static final Color GRID_COLOR = Color.web("#333333");
 
@@ -39,6 +40,10 @@ public class GameScreen {
     private Group activePieceView;
 
     public GameScreen() {
+
+        /* -------------------------------------------------------------------- */
+        /*  build the board itself - locked grid, active piece layer, pause     */
+        /* -------------------------------------------------------------------- */
         GridPane lockedGrid = createLockedGrid();
         int boardWidth = Board.WIDTH * CELL_SIZE;
         int boardHeight = Board.HEIGHT * CELL_SIZE;
@@ -52,28 +57,59 @@ public class GameScreen {
         pauseOverlay.setPrefSize(boardWidth, boardHeight);
         pauseOverlay.setMaxSize(boardWidth, boardHeight);
 
+        // stacked on top of each other: locked blocks at the bottom, the
+        // falling piece above that, the pause overlay above everything
+
         StackPane boardStack = new StackPane(lockedGrid, activePieceLayer, pauseOverlay);
         boardStack.setAlignment(Pos.TOP_LEFT);
         boardStack.setMinSize(boardWidth, boardHeight);
         boardStack.setPrefSize(boardWidth, boardHeight);
         boardStack.setMaxSize(boardWidth, boardHeight);
 
-        scoreLabel.setTextFill(Color.WHITE);
-        scoreLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-        statusLabel.setTextFill(Color.web("#ff80ab"));
-        statusLabel.setWrapText(true);
+        /* -------------------------------------------------------------------- */
+        /*  bottom bar - score/status on top, controls centered below           */
+        /* -------------------------------------------------------------------- */
 
-        Label controlsLabel = new Label("Controls\n← → Move\n↑ Rotate\n↓ Soft drop\nSpace Hard drop\nP Pause");
-        controlsLabel.setTextFill(Color.web("#cccccc"));
-        VBox sidebar = new VBox(12, scoreLabel, statusLabel, controlsLabel);
-        sidebar.setPadding(new Insets(14));
-        sidebar.setMinWidth(145);
-        sidebar.setPrefWidth(145);
+        VBox bottomBar = createBottomBar();
+
+        /* -------------------------------------------------------------------- */
+        /*  put the board and bottom bar into one window                        */
+        /* -------------------------------------------------------------------- */
 
         root.setCenter(boardStack);
-        root.setRight(sidebar);
+        root.setBottom(bottomBar);
         root.setStyle("-fx-background-color: #121212;");
         root.setFocusTraversable(true);
+    }
+
+    // score/status sit on their own row, with the controls hint centered
+    // underneath on a second row - keeps the whole bar narrow instead of
+    // stretching everything out sideways
+
+    private VBox createBottomBar() {
+        scoreLabel.setTextFill(Color.WHITE);
+        scoreLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+
+        statusLabel.setTextFill(Color.web("#ff80ab"));
+        statusLabel.setStyle("-fx-font-size: 14px;");
+        statusLabel.setWrapText(true);
+
+        HBox scoreRow = new HBox(16, scoreLabel, statusLabel);
+        scoreRow.setAlignment(Pos.CENTER);
+
+        Label controlsLabel = new Label(
+                "\u2190 \u2192 Move  |  \u2191 Rotate  \n \u2193 Soft Drop  |  Space - Hard Drop  |  P - Pause");
+        controlsLabel.setTextFill(Color.web("#cccccc"));
+        controlsLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+        controlsLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        controlsLabel.setAlignment(Pos.CENTER);
+        controlsLabel.setMaxWidth(Double.MAX_VALUE);
+
+        VBox bottomBar = new VBox(6, scoreRow, controlsLabel);
+        bottomBar.setAlignment(Pos.CENTER);
+        bottomBar.setPadding(new Insets(10));
+        bottomBar.setStyle("-fx-background-color: #1a1a1a;");
+        return bottomBar;
     }
 
     private GridPane createLockedGrid() {
@@ -102,6 +138,10 @@ public class GameScreen {
         return grid;
     }
 
+    /* -------------------------------------------------------------------- */
+    /*  hooks that GameController uses to talk to this screen               */
+    /* -------------------------------------------------------------------- */
+
     public BorderPane getRoot() {
         return root;
     }
@@ -126,7 +166,11 @@ public class GameScreen {
         pauseOverlay.setPaused(paused);
     }
 
-    /** Repaints the fixed blocks and recreates the currently falling piece. */
+    /* -------------------------------------------------------------------- */
+    /*  drawing the board and the falling piece                             */
+    /* -------------------------------------------------------------------- */
+
+    // repaints the fixed blocks and recreates the currently falling piece
     public void render(Board board, Color[][] lockedColors, Tetromino currentPiece) {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
@@ -166,7 +210,7 @@ public class GameScreen {
         return pieceView;
     }
 
-    /** Moves only the falling piece between its two logical board rows. */
+    // moves only the falling piece between its two logical board rows
     public void setActivePieceVerticalOffset(double pixelOffset) {
         if (activePieceView != null) {
             activePieceView.setTranslateY(pixelOffset);
