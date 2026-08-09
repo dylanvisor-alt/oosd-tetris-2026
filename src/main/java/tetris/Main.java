@@ -41,7 +41,7 @@ public class Main extends Application {
     }
 
     private void showGame() {
-        GameScreen gameScreen = new GameScreen();
+        GameScreen gameScreen = new GameScreen(this::showGame);
         GameController gameController = new GameController(gameScreen);
         sceneManager.show(gameScreen.getRoot());
         gameController.startGame();

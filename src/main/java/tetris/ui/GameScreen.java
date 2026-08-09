@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -18,6 +19,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import tetris.util.Constants;
+
+import java.util.Objects;
 
 /* -------------------------------------------------------------------- */
 /*  javafx view for gameplay - draws state given by GameController      */
@@ -26,7 +30,7 @@ import javafx.scene.shape.Rectangle;
 
 public class GameScreen {
 
-    public static final int CELL_SIZE = 30;
+    public static final int CELL_SIZE = 28;
     private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
     private static final Color GRID_COLOR = Color.web("#333333");
 
@@ -36,10 +40,13 @@ public class GameScreen {
     private final PauseOverlay pauseOverlay = new PauseOverlay();
     private final Label scoreLabel = new Label("Score: 0");
     private final Label statusLabel = new Label();
+    private final Button restartButton = new Button("Restart");
 
     private Group activePieceView;
 
-    public GameScreen() {
+    public GameScreen(Runnable onRestart) {
+
+        Objects.requireNonNull(onRestart, "onRestart");
 
         /* -------------------------------------------------------------------- */
         /*  build the board itself - locked grid, active piece layer, pause     */
@@ -76,10 +83,24 @@ public class GameScreen {
         /*  put the board and bottom bar into one window                        */
         /* -------------------------------------------------------------------- */
 
-        root.setCenter(boardStack);
+        StackPane boardArea = new StackPane(boardStack);
+        boardArea.setAlignment(Pos.CENTER);
+        boardArea.setPadding(new Insets(10, 130, 10, 130));
+        boardArea.setMinWidth(Constants.APP_WIDTH);
+        boardArea.setPrefWidth(Constants.APP_WIDTH);
+        boardArea.getStyleClass().add("game-board-area");
+
+        root.setCenter(boardArea);
         root.setBottom(bottomBar);
-        root.setStyle("-fx-background-color: #121212;");
+        root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
+        root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
+        root.getStyleClass().add("game-background");
         root.setFocusTraversable(true);
+
+        restartButton.setOnAction(event -> onRestart.run());
+        restartButton.setVisible(false);
+        restartButton.setManaged(false);
+        restartButton.getStyleClass().add("game-action-button");
     }
 
     // score/status sit on their own row, with the controls hint centered
@@ -94,7 +115,7 @@ public class GameScreen {
         statusLabel.setStyle("-fx-font-size: 14px;");
         statusLabel.setWrapText(true);
 
-        HBox scoreRow = new HBox(16, scoreLabel, statusLabel);
+        HBox scoreRow = new HBox(16, scoreLabel, statusLabel, restartButton);
         scoreRow.setAlignment(Pos.CENTER);
 
         Label controlsLabel = new Label(
@@ -160,6 +181,12 @@ public class GameScreen {
 
     public void showStatus(String status) {
         statusLabel.setText(status);
+    }
+
+    public void showGameOver() {
+        statusLabel.setText("GAME OVER");
+        restartButton.setManaged(true);
+        restartButton.setVisible(true);
     }
 
     public void showPauseOverlay(boolean paused) {
