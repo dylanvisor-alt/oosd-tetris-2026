@@ -1,0 +1,17 @@
+# Maven / Java build output
+target/
+out/
+*.class
+
+# IntelliJ IDEA and VS Code workspace settings
+.idea/
+*.iml
+.vscode/
+
+# macOS Finder metadata
+.DS_Store
+
+# Local environment files and credentials
+.env
+.env.*
+!.env.example
