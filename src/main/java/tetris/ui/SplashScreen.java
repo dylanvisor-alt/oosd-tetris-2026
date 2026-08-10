@@ -8,6 +8,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import tetris.util.Constants;
 
 import java.util.Objects;
 
@@ -22,22 +23,25 @@ public class SplashScreen {
 
     public SplashScreen() {
         Label title = new Label("TETRIS");
-        title.getStyleClass().add("game-title");
+        title.getStyleClass().add("splash-title");
 
         Label course = new Label("Object Oriented Software Development");
         course.getStyleClass().add("subtitle");
 
         ProgressIndicator progress = new ProgressIndicator();
-        progress.setPrefSize(42, 42);
+        progress.setPrefSize(34, 34);
 
         Label loading = new Label("Loading game...");
         loading.getStyleClass().add("splash-loading");
 
-        VBox content = new VBox(18, title, course, progress, loading);
+        VBox content = new VBox(12, title, course, progress, loading);
         content.setAlignment(Pos.CENTER);
+        content.setMaxSize(360, 300);
+        content.getStyleClass().add("splash-panel");
 
         root.getChildren().add(content);
-        root.setPrefSize(520, 600);
+        root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
+        root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.getStyleClass().add("app-background");
     }
 

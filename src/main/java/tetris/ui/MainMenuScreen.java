@@ -7,15 +7,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import tetris.util.Constants;
 
 /**
  * Main navigation view. Actions are supplied as callbacks so this screen does
  * not need to know about Stage, SceneManager, or the game model.
  */
 public class MainMenuScreen {
-
-    private static final double SCREEN_WIDTH = 520;
-    private static final double SCREEN_HEIGHT = 600;
 
     private final StackPane root = new StackPane();
 
@@ -53,7 +51,8 @@ public class MainMenuScreen {
 
         root.getChildren().add(menu);
         root.setAlignment(Pos.CENTER);
-        root.setPrefSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
+        root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.getStyleClass().add("app-background");
     }
 

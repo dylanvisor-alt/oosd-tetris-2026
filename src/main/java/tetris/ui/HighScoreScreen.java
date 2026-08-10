@@ -10,14 +10,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import tetris.model.ScoreEntry;
+import tetris.util.Constants;
 
 import java.util.List;
 
 /** Displays the top ten scores and provides navigation back to the main menu. */
 public class HighScoreScreen {
-
-    private static final double SCREEN_WIDTH = 520;
-    private static final double SCREEN_HEIGHT = 600;
 
     private final StackPane root = new StackPane();
 
@@ -42,7 +40,8 @@ public class HighScoreScreen {
 
         root.getChildren().add(content);
         root.setAlignment(Pos.CENTER);
-        root.setPrefSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
+        root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.getStyleClass().add("app-background");
     }
 

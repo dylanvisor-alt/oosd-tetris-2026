@@ -6,6 +6,14 @@
     -fx-background-color: linear-gradient(to bottom, #111827, #070b14);
 }
 
+.game-background {
+    -fx-background-color: linear-gradient(to bottom, #111827, #080b12);
+}
+
+.game-board-area {
+    -fx-background-color: #0b0f17;
+}
+
 .menu-panel {
     -fx-background-color: rgba(23, 32, 51, 0.94);
     -fx-background-radius: 18;
@@ -17,6 +25,20 @@
 
 .game-title {
     -fx-font-size: 52px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #60a5fa;
+}
+
+.splash-panel {
+    -fx-background-color: rgba(23, 32, 51, 0.94);
+    -fx-background-radius: 16;
+    -fx-border-color: #334155;
+    -fx-border-radius: 16;
+    -fx-padding: 34;
+}
+
+.splash-title {
+    -fx-font-size: 42px;
     -fx-font-weight: bold;
     -fx-text-fill: #60a5fa;
 }
@@ -84,4 +106,18 @@
     -fx-background-color: #334155;
     -fx-text-fill: #94a3b8;
     -fx-opacity: 0.75;
+}
+
+.game-action-button {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 7;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+}
+
+.game-action-button:hover {
+    -fx-background-color: #3b82f6;
 }

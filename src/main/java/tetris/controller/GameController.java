@@ -259,7 +259,7 @@ public class GameController {
         if (!board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY())) {
             gameState = GameState.GAME_OVER;
             gravityTimer.stop();
-            gameScreen.showStatus("GAME OVER");
+            gameScreen.showGameOver();
         }
     }
 
