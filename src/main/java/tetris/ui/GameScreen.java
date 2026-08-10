@@ -22,6 +22,7 @@ import javafx.scene.shape.Rectangle;
 import tetris.util.Constants;
 
 import java.util.Objects;
+import java.util.function.IntConsumer;
 
 /* -------------------------------------------------------------------- */
 /*  javafx view for gameplay - draws state given by GameController      */
@@ -41,12 +42,15 @@ public class GameScreen {
     private final Label scoreLabel = new Label("Score: 0");
     private final Label statusLabel = new Label();
     private final Button restartButton = new Button("Restart");
+    private final Button saveScoreButton = new Button("Save Score");
 
     private Group activePieceView;
+    private int finalScore;
 
-    public GameScreen(Runnable onRestart) {
+    public GameScreen(Runnable onRestart, IntConsumer onSaveScore) {
 
         Objects.requireNonNull(onRestart, "onRestart");
+        Objects.requireNonNull(onSaveScore, "onSaveScore");
 
         /* -------------------------------------------------------------------- */
         /*  build the board itself - locked grid, active piece layer, pause     */
@@ -101,6 +105,11 @@ public class GameScreen {
         restartButton.setVisible(false);
         restartButton.setManaged(false);
         restartButton.getStyleClass().add("game-action-button");
+
+        saveScoreButton.setOnAction(event -> onSaveScore.accept(finalScore));
+        saveScoreButton.setVisible(false);
+        saveScoreButton.setManaged(false);
+        saveScoreButton.getStyleClass().add("game-action-button");
     }
 
     // score/status sit on their own row, with the controls hint centered
@@ -115,7 +124,7 @@ public class GameScreen {
         statusLabel.setStyle("-fx-font-size: 14px;");
         statusLabel.setWrapText(true);
 
-        HBox scoreRow = new HBox(16, scoreLabel, statusLabel, restartButton);
+        HBox scoreRow = new HBox(16, scoreLabel, statusLabel, restartButton, saveScoreButton);
         scoreRow.setAlignment(Pos.CENTER);
 
         Label controlsLabel = new Label(
@@ -183,10 +192,13 @@ public class GameScreen {
         statusLabel.setText(status);
     }
 
-    public void showGameOver() {
+    public void showGameOver(int finalScore) {
+        this.finalScore = finalScore;
         statusLabel.setText("GAME OVER");
         restartButton.setManaged(true);
         restartButton.setVisible(true);
+        saveScoreButton.setManaged(true);
+        saveScoreButton.setVisible(true);
     }
 
     public void showPauseOverlay(boolean paused) {
