@@ -1,6 +1,7 @@
 package tetris.ui;
 
 import javafx.geometry.Insets;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -56,6 +57,14 @@ public class HighScoreScreen {
         addCell(table, "Rank", 0, 0, "score-header");
         addCell(table, "Name", 1, 0, "score-header");
         addCell(table, "Score", 2, 0, "score-header");
+
+        if (scores.isEmpty()) {
+            Label emptyMessage = new Label("No scores saved yet");
+            emptyMessage.getStyleClass().add("score-cell");
+            table.add(emptyMessage, 0, 1, 3, 1);
+            GridPane.setHalignment(emptyMessage, HPos.CENTER);
+            return table;
+        }
 
         for (int index = 0; index < scores.size(); index++) {
             ScoreEntry entry = scores.get(index);

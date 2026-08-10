@@ -1,27 +1,53 @@
 package tetris;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import tetris.controller.HighScoreController;
 import tetris.model.ScoreEntry;
+import tetris.persistence.SQLiteScoreRepository;
 
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HighScoreControllerTest {
 
+    @TempDir
+    Path temporaryDirectory;
+
     @Test
-    void returnsOnlyTenScoresInDescendingOrder() {
-        List<ScoreEntry> scores = new ArrayList<>();
+    void persistsAndReturnsOnlyTenScoresInDescendingOrder() {
+        Path databasePath = temporaryDirectory.resolve("test-highscores.db");
+        HighScoreController controller = new HighScoreController(
+                new SQLiteScoreRepository(databasePath)
+        );
+
         for (int score = 0; score < 12; score++) {
-            scores.add(new ScoreEntry("Player " + score, score * 100));
+            controller.saveScore("Player " + score, score * 100);
         }
 
-        List<ScoreEntry> topScores = new HighScoreController(scores).getTopScores();
+        HighScoreController reopenedController = new HighScoreController(
+                new SQLiteScoreRepository(databasePath)
+        );
+        List<ScoreEntry> topScores = reopenedController.getTopScores();
 
+        assertTrue(Files.exists(databasePath));
         assertEquals(10, topScores.size());
         assertEquals(1_100, topScores.get(0).score());
         assertEquals(200, topScores.get(9).score());
+    }
+
+    @Test
+    void trimsPlayerNameBeforeSaving() {
+        HighScoreController controller = new HighScoreController(
+                new SQLiteScoreRepository(temporaryDirectory.resolve("trim-test.db"))
+        );
+
+        controller.saveScore("  Gia  ", 500);
+
+        assertEquals("Gia", controller.getTopScores().get(0).playerName());
     }
 }

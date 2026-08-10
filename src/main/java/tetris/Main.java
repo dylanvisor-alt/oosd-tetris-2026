@@ -8,6 +8,8 @@ import tetris.ui.MainMenuScreen;
 import tetris.ui.SplashScreen;
 import tetris.util.SceneManager;
 import javafx.application.Application;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 
 /* Starts the application. Game rules live in GameController and JavaFX drawing lives in GameScreen. */
@@ -41,10 +43,28 @@ public class Main extends Application {
     }
 
     private void showGame() {
-        GameScreen gameScreen = new GameScreen(this::showGame);
+        GameScreen gameScreen = new GameScreen(this::showGame, this::saveHighScore);
         GameController gameController = new GameController(gameScreen);
         sceneManager.show(gameScreen.getRoot());
         gameController.startGame();
+    }
+
+    private void saveHighScore(int finalScore) {
+        TextInputDialog nameDialog = new TextInputDialog("Player");
+        nameDialog.setTitle("Save High Score");
+        nameDialog.setHeaderText("Game over - Score: " + finalScore);
+        nameDialog.setContentText("Player name:");
+        nameDialog.getEditor().setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= 20 ? change : null
+        ));
+
+        nameDialog.showAndWait()
+                .map(String::trim)
+                .filter(name -> !name.isBlank())
+                .ifPresent(name -> {
+                    highScoreController.saveScore(name, finalScore);
+                    showHighScores();
+                });
     }
 
     private void showHighScores() {
