@@ -43,6 +43,23 @@
     -fx-text-fill: #60a5fa;
 }
 
+.splash-group {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e2e8f0;
+}
+
+.splash-course {
+    -fx-font-size: 13px;
+    -fx-text-fill: #cbd5e1;
+}
+
+.splash-milestone {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+    -fx-padding: 0 0 8 0;
+}
+
 .subtitle {
     -fx-font-size: 14px;
     -fx-text-fill: #cbd5e1;
