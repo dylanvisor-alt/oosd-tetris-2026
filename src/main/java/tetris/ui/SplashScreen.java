@@ -25,8 +25,14 @@ public class SplashScreen {
         Label title = new Label("TETRIS");
         title.getStyleClass().add("splash-title");
 
-        Label course = new Label("Object Oriented Software Development");
-        course.getStyleClass().add("subtitle");
+        Label group = new Label("Group PG14");
+        group.getStyleClass().add("splash-group");
+
+        Label course = new Label("2006ICT - Object Oriented Software Development");
+        course.getStyleClass().add("splash-course");
+
+        Label milestone = new Label("Milestone 1 - 2026");
+        milestone.getStyleClass().add("splash-milestone");
 
         ProgressIndicator progress = new ProgressIndicator();
         progress.setPrefSize(34, 34);
@@ -34,7 +40,7 @@ public class SplashScreen {
         Label loading = new Label("Loading game...");
         loading.getStyleClass().add("splash-loading");
 
-        VBox content = new VBox(12, title, course, progress, loading);
+        VBox content = new VBox(10, title, group, course, milestone, progress, loading);
         content.setAlignment(Pos.CENTER);
         content.setMaxSize(360, 300);
         content.getStyleClass().add("splash-panel");
