@@ -15,7 +15,7 @@ public class PauseOverlay extends StackPane {
         title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
 
         Label instruction = new Label("Press P to continue");
-        instruction.setTextFill(Color.WHITE);
+        instruction.setTextFill(Color.RED);
 
         VBox message = new VBox(8, title, instruction);
         message.setAlignment(Pos.CENTER);

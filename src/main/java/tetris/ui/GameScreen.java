@@ -32,8 +32,28 @@ import java.util.function.IntConsumer;
 public class GameScreen {
 
     public static final int CELL_SIZE = 28;
-    private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
-    private static final Color GRID_COLOR = Color.web("#333333");
+    private static final Color EMPTY_COLOUR = Color.web("#1e1e1e");
+    private static final Color GRID_COLOUR = Color.web("#333333");
+
+    private static final String BUTTON_STYLE =
+            "-fx-background-color: #1e1e1e;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-size: 13px;"
+                    + "-fx-padding: 8 14 8 14;"
+                    + "-fx-background-radius: 6;"
+                    + "-fx-border-color: #333333;"
+                    + "-fx-border-radius: 6;"
+                    + "-fx-border-width: 1;";
+
+    private static final String BUTTON_HOVER_STYLE =
+            "-fx-background-color: #007aff;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-size: 13px;"
+                    + "-fx-padding: 8 14 8 14;"
+                    + "-fx-background-radius: 6;"
+                    + "-fx-border-color: #007aff;"
+                    + "-fx-border-radius: 6;"
+                    + "-fx-border-width: 1;";
 
     private final BorderPane root = new BorderPane();
     private final Rectangle[][] lockedCellViews = new Rectangle[Board.HEIGHT][Board.WIDTH];
@@ -92,24 +112,27 @@ public class GameScreen {
         boardArea.setPadding(new Insets(10, 130, 10, 130));
         boardArea.setMinWidth(Constants.APP_WIDTH);
         boardArea.setPrefWidth(Constants.APP_WIDTH);
-        boardArea.getStyleClass().add("game-board-area");
 
         root.setCenter(boardArea);
         root.setBottom(bottomBar);
         root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
-        root.getStyleClass().add("game-background");
+        root.setStyle("-fx-background-color: #121212;");
         root.setFocusTraversable(true);
 
         restartButton.setOnAction(event -> onRestart.run());
         restartButton.setVisible(false);
         restartButton.setManaged(false);
-        restartButton.getStyleClass().add("game-action-button");
+        restartButton.setStyle(BUTTON_STYLE);
+        restartButton.setOnMouseEntered(event -> restartButton.setStyle(BUTTON_HOVER_STYLE));
+        restartButton.setOnMouseExited(event -> restartButton.setStyle(BUTTON_STYLE));
 
         saveScoreButton.setOnAction(event -> onSaveScore.accept(finalScore));
         saveScoreButton.setVisible(false);
         saveScoreButton.setManaged(false);
-        saveScoreButton.getStyleClass().add("game-action-button");
+        saveScoreButton.setStyle(BUTTON_STYLE);
+        saveScoreButton.setOnMouseEntered(event -> saveScoreButton.setStyle(BUTTON_HOVER_STYLE));
+        saveScoreButton.setOnMouseExited(event -> saveScoreButton.setStyle(BUTTON_STYLE));
     }
 
     // score/status sit on their own row, with the controls hint centered
@@ -153,8 +176,8 @@ public class GameScreen {
 
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
-                Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE, EMPTY_COLOR);
-                cell.setStroke(GRID_COLOR);
+                Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE, EMPTY_COLOUR);
+                cell.setStroke(GRID_COLOUR);
                 lockedCellViews[row][col] = cell;
                 grid.add(cell, col, row);
             }
@@ -214,7 +237,7 @@ public class GameScreen {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
                 lockedCellViews[row][col].setFill(
-                        board.isCellOccupied(row, col) ? lockedColors[row][col] : EMPTY_COLOR);
+                        board.isCellOccupied(row, col) ? lockedColors[row][col] : EMPTY_COLOUR);
             }
         }
 
@@ -236,7 +259,7 @@ public class GameScreen {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col] == 1) {
                     Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE, piece.getColor());
-                    cell.setStroke(GRID_COLOR);
+                    cell.setStroke(GRID_COLOUR);
                     cell.setX(col * CELL_SIZE);
                     cell.setY(row * CELL_SIZE);
                     pieceView.getChildren().add(cell);

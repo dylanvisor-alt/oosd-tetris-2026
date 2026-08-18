@@ -84,7 +84,8 @@ public class Board {
     // scans from the bottom up, removing any fully filled rows
     // returns how many rows were cleared, used for scoring
     // returns the row indices that were cleared, so callers can keep other
-// per-cell data (like colours) in sync without re-scanning independently
+    // per-cell data (like colours) in sync without re-scanning independently
+
     public java.util.List<Integer> clearFullRows() {
         java.util.List<Integer> clearedRows = new java.util.ArrayList<>();
 
