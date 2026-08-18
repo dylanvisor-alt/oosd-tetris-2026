@@ -31,9 +31,9 @@ import java.util.function.IntConsumer;
 
 public class GameScreen {
 
-    public static final int CELL_SIZE = 28;
-    private static final Color EMPTY_COLOR = Color.web("#1e1e1e");
-    private static final Color GRID_COLOR = Color.web("#333333");
+    public static final int cell_size = 28;
+    private static final Color empty_colour = Color.web("#1e1e1e");
+    private static final Color grid_colour = Color.web("#333333");
 
     private final BorderPane root = new BorderPane();
     private final Rectangle[][] lockedCellViews = new Rectangle[Board.HEIGHT][Board.WIDTH];
@@ -56,8 +56,8 @@ public class GameScreen {
         /*  build the board itself - locked grid, active piece layer, pause     */
         /* -------------------------------------------------------------------- */
         GridPane lockedGrid = createLockedGrid();
-        int boardWidth = Board.WIDTH * CELL_SIZE;
-        int boardHeight = Board.HEIGHT * CELL_SIZE;
+        int boardWidth = Board.WIDTH * cell_size;
+        int boardHeight = Board.HEIGHT * cell_size;
 
         activePieceLayer.setMinSize(boardWidth, boardHeight);
         activePieceLayer.setPrefSize(boardWidth, boardHeight);
@@ -145,23 +145,23 @@ public class GameScreen {
     private GridPane createLockedGrid() {
         GridPane grid = new GridPane();
         for (int row = 0; row < Board.HEIGHT; row++) {
-            grid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
+            grid.getRowConstraints().add(new RowConstraints(cell_size));
         }
         for (int col = 0; col < Board.WIDTH; col++) {
-            grid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
+            grid.getColumnConstraints().add(new ColumnConstraints(cell_size));
         }
 
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
-                Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE, EMPTY_COLOR);
-                cell.setStroke(GRID_COLOR);
+                Rectangle cell = new Rectangle(cell_size, cell_size, empty_colour);
+                cell.setStroke(grid_colour);
                 lockedCellViews[row][col] = cell;
                 grid.add(cell, col, row);
             }
         }
 
-        int boardWidth = Board.WIDTH * CELL_SIZE;
-        int boardHeight = Board.HEIGHT * CELL_SIZE;
+        int boardWidth = Board.WIDTH * cell_size;
+        int boardHeight = Board.HEIGHT * cell_size;
         grid.setMinSize(boardWidth, boardHeight);
         grid.setPrefSize(boardWidth, boardHeight);
         grid.setMaxSize(boardWidth, boardHeight);
@@ -214,7 +214,7 @@ public class GameScreen {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
                 lockedCellViews[row][col].setFill(
-                        board.isCellOccupied(row, col) ? lockedColors[row][col] : EMPTY_COLOR);
+                        board.isCellOccupied(row, col) ? lockedColors[row][col] : empty_colour);
             }
         }
 
@@ -235,17 +235,17 @@ public class GameScreen {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col] == 1) {
-                    Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE, piece.getColor());
-                    cell.setStroke(GRID_COLOR);
-                    cell.setX(col * CELL_SIZE);
-                    cell.setY(row * CELL_SIZE);
+                    Rectangle cell = new Rectangle(cell_size, cell_size, piece.getColor());
+                    cell.setStroke(grid_colour);
+                    cell.setX(col * cell_size);
+                    cell.setY(row * cell_size);
                     pieceView.getChildren().add(cell);
                 }
             }
         }
 
-        pieceView.setLayoutX(piece.getX() * CELL_SIZE);
-        pieceView.setLayoutY(piece.getY() * CELL_SIZE);
+        pieceView.setLayoutX(piece.getX() * cell_size);
+        pieceView.setLayoutY(piece.getY() * cell_size);
         return pieceView;
     }
 
