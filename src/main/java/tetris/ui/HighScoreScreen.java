@@ -18,7 +18,7 @@ import java.util.List;
 
 public class HighScoreScreen {
 
-    private static final String button_fixed =
+    private static final String BUTTON_FIXED =
             "-fx-background-color: #1e1e1e;"
                     + "-fx-text-fill: white;"
                     + "-fx-font-size: 14px;"
@@ -28,7 +28,7 @@ public class HighScoreScreen {
                     + "-fx-border-radius: 6;"
                     + "-fx-border-width: 1;";
 
-    private static final String button_hover =
+    private static final String BUTTON_HOVER =
             "-fx-background-color: #007aff;"
                     + "-fx-text-fill: white;"
                     + "-fx-font-size: 14px;"
@@ -49,9 +49,9 @@ public class HighScoreScreen {
 
         Button backButton = new Button("Back");
         backButton.setMaxWidth(Double.MAX_VALUE);
-        backButton.setStyle(button_fixed);
-        backButton.setOnMouseEntered(event -> backButton.setStyle(button_hover));
-        backButton.setOnMouseExited(event -> backButton.setStyle(button_fixed));
+        backButton.setStyle(BUTTON_FIXED);
+        backButton.setOnMouseEntered(event -> backButton.setStyle(BUTTON_HOVER));
+        backButton.setOnMouseExited(event -> backButton.setStyle(BUTTON_FIXED));
         backButton.setOnAction(event -> onBack.run());
 
         VBox content = new VBox(22, title, scoreTable, backButton);

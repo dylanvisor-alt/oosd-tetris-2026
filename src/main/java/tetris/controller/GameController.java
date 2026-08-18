@@ -26,20 +26,20 @@ public class GameController {
     // AnimationTimer only ever hands us nanoseconds, so this is the one spot
     // a nanosecond value has to exist - everything else works in milliseconds
 
-    private static final double nano_to_ms = 1_000_000.0;
+    private static final double NANO_TO_MS = 1_000_000.0;
 
-    private static final double drop_speed = 300.0;
-    private static final double frame_gap_max = 50.0;
+    private static final double DROP_SPEED = 300.0;
+    private static final double MAX_FRAME_GAP = 50.0;
 
-    private static final Color locked_colour = Color.web("#007aff");
+    private static final Color LOCKED_COLOUR = Color.web("#007aff");
 
     /* -------------------------------------------------------------------- */
     /*  game state - changes constantly while playing                       */
     /* -------------------------------------------------------------------- */
     private final Board board = new Board();
     private final GameScreen game_screen;
-    private final Color[][] locked_colours = new Color[Board.HEIGHT][Board.WIDTH];
-    private final AnimationTimer gravity_timer;
+    private final Color[][] LOCKED_COLOURS = new Color[Board.HEIGHT][Board.WIDTH];
+    private final AnimationTimer GRAVITY_TIMER;
 
     private Tetromino current_piece;
     private GameState game_state = GameState.RUNNING;
@@ -49,11 +49,11 @@ public class GameController {
 
     public GameController(GameScreen game_screen) {
         this.game_screen = game_screen;
-        gravity_timer = new AnimationTimer() {
+        GRAVITY_TIMER = new AnimationTimer() {
             @Override
             public void handle(long currentTimeNanos) {
                 // convert straight away so every other method deals in ms only
-                double currentTimeMs = currentTimeNanos / nano_to_ms;
+                double currentTimeMs = currentTimeNanos / NANO_TO_MS;
                 updateGravity(currentTimeMs);
             }
         };
@@ -68,7 +68,7 @@ public class GameController {
         spawnPiece();
         render();
         if (game_state == GameState.RUNNING) {
-            gravity_timer.start();
+            GRAVITY_TIMER.start();
         }
         game_screen.requestKeyboardFocus();
     }
@@ -90,7 +90,7 @@ public class GameController {
             return;
         }
 
-        double frameDelta = Math.min(currentTimeMs - lastFrameTimeMs, frame_gap_max);
+        double frameDelta = Math.min(currentTimeMs - lastFrameTimeMs, MAX_FRAME_GAP);
         lastFrameTimeMs = currentTimeMs;
 
         if (!canCurrentPieceFall()) {
@@ -100,9 +100,9 @@ public class GameController {
         }
 
         accumulatedFallMs += frameDelta;
-        if (accumulatedFallMs >= drop_speed) {
+        if (accumulatedFallMs >= DROP_SPEED) {
             current_piece.moveDown();
-            accumulatedFallMs -= drop_speed;
+            accumulatedFallMs -= DROP_SPEED;
 
             if (!canCurrentPieceFall()) {
                 accumulatedFallMs = 0;
@@ -116,7 +116,7 @@ public class GameController {
             render();
         }
 
-        double fallProgress = accumulatedFallMs / drop_speed;
+        double fallProgress = accumulatedFallMs / DROP_SPEED;
         game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 
@@ -208,7 +208,7 @@ public class GameController {
                     int boardRow = current_piece.getY() + row;
                     int boardCol = current_piece.getX() + col;
                     if (boardRow >= 0 && boardRow < Board.HEIGHT && boardCol >= 0 && boardCol < Board.WIDTH) {
-                        locked_colours[boardRow][boardCol] = locked_colour;
+                        LOCKED_COLOURS[boardRow][boardCol] = LOCKED_COLOUR;
                     }
                 }
             }
@@ -236,9 +236,9 @@ public class GameController {
 
     private void shiftColoursDown(int clearedRow) {
         for (int row = clearedRow; row > 0; row--) {
-            locked_colours[row] = locked_colours[row - 1].clone();
+            LOCKED_COLOURS[row] = LOCKED_COLOURS[row - 1].clone();
         }
-        locked_colours[0] = new Color[Board.WIDTH];
+        LOCKED_COLOURS[0] = new Color[Board.WIDTH];
     }
 
     private int scoreForLines(int lineCount) {
@@ -261,7 +261,7 @@ public class GameController {
         lastFrameTimeMs = 0;
         if (!board.canPlace(current_piece, current_piece.getX(), current_piece.getY())) {
             game_state = GameState.GAME_OVER;
-            gravity_timer.stop();
+            GRAVITY_TIMER.stop();
             game_screen.showGameOver(score);
         }
     }
@@ -269,13 +269,13 @@ public class GameController {
     private void togglePause() {
         if (game_state == GameState.RUNNING) {
             game_state = GameState.PAUSED;
-            gravity_timer.stop();
+            GRAVITY_TIMER.stop();
             lastFrameTimeMs = 0;
             game_screen.showPauseOverlay(true);
             game_screen.showStatus("Game paused");
         } else if (game_state == GameState.PAUSED) {
             game_state = GameState.RUNNING;
-            gravity_timer.start();
+            GRAVITY_TIMER.start();
             game_screen.showPauseOverlay(false);
             game_screen.showStatus("");
         }
@@ -286,8 +286,8 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void render() {
-        game_screen.render(board, locked_colours, current_piece);
-        double fallProgress = accumulatedFallMs / drop_speed;
+        game_screen.render(board, LOCKED_COLOURS, current_piece);
+        double fallProgress = accumulatedFallMs / DROP_SPEED;
         game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 }
