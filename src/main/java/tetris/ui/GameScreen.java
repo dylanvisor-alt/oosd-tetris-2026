@@ -31,9 +31,29 @@ import java.util.function.IntConsumer;
 
 public class GameScreen {
 
-    public static final int cell_size = 28;
-    private static final Color empty_colour = Color.web("#1e1e1e");
-    private static final Color grid_colour = Color.web("#333333");
+    public static final int CELL_SIZE = 28;
+    private static final Color EMPTY_COLOUR = Color.web("#1e1e1e");
+    private static final Color GRID_COLOUR = Color.web("#333333");
+
+    private static final String BUTTON_STYLE =
+            "-fx-background-color: #1e1e1e;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-size: 13px;"
+                    + "-fx-padding: 8 14 8 14;"
+                    + "-fx-background-radius: 6;"
+                    + "-fx-border-color: #333333;"
+                    + "-fx-border-radius: 6;"
+                    + "-fx-border-width: 1;";
+
+    private static final String BUTTON_HOVER_STYLE =
+            "-fx-background-color: #007aff;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-size: 13px;"
+                    + "-fx-padding: 8 14 8 14;"
+                    + "-fx-background-radius: 6;"
+                    + "-fx-border-color: #007aff;"
+                    + "-fx-border-radius: 6;"
+                    + "-fx-border-width: 1;";
 
     private final BorderPane root = new BorderPane();
     private final Rectangle[][] lockedCellViews = new Rectangle[Board.HEIGHT][Board.WIDTH];
@@ -56,8 +76,8 @@ public class GameScreen {
         /*  build the board itself - locked grid, active piece layer, pause     */
         /* -------------------------------------------------------------------- */
         GridPane lockedGrid = createLockedGrid();
-        int boardWidth = Board.WIDTH * cell_size;
-        int boardHeight = Board.HEIGHT * cell_size;
+        int boardWidth = Board.WIDTH * CELL_SIZE;
+        int boardHeight = Board.HEIGHT * CELL_SIZE;
 
         activePieceLayer.setMinSize(boardWidth, boardHeight);
         activePieceLayer.setPrefSize(boardWidth, boardHeight);
@@ -92,24 +112,27 @@ public class GameScreen {
         boardArea.setPadding(new Insets(10, 130, 10, 130));
         boardArea.setMinWidth(Constants.APP_WIDTH);
         boardArea.setPrefWidth(Constants.APP_WIDTH);
-        boardArea.getStyleClass().add("game-board-area");
 
         root.setCenter(boardArea);
         root.setBottom(bottomBar);
         root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
-        root.getStyleClass().add("game-background");
+        root.setStyle("-fx-background-color: #121212;");
         root.setFocusTraversable(true);
 
         restartButton.setOnAction(event -> onRestart.run());
         restartButton.setVisible(false);
         restartButton.setManaged(false);
-        restartButton.getStyleClass().add("game-action-button");
+        restartButton.setStyle(BUTTON_STYLE);
+        restartButton.setOnMouseEntered(event -> restartButton.setStyle(BUTTON_HOVER_STYLE));
+        restartButton.setOnMouseExited(event -> restartButton.setStyle(BUTTON_STYLE));
 
         saveScoreButton.setOnAction(event -> onSaveScore.accept(finalScore));
         saveScoreButton.setVisible(false);
         saveScoreButton.setManaged(false);
-        saveScoreButton.getStyleClass().add("game-action-button");
+        saveScoreButton.setStyle(BUTTON_STYLE);
+        saveScoreButton.setOnMouseEntered(event -> saveScoreButton.setStyle(BUTTON_HOVER_STYLE));
+        saveScoreButton.setOnMouseExited(event -> saveScoreButton.setStyle(BUTTON_STYLE));
     }
 
     // score/status sit on their own row, with the controls hint centered
@@ -145,23 +168,23 @@ public class GameScreen {
     private GridPane createLockedGrid() {
         GridPane grid = new GridPane();
         for (int row = 0; row < Board.HEIGHT; row++) {
-            grid.getRowConstraints().add(new RowConstraints(cell_size));
+            grid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
         }
         for (int col = 0; col < Board.WIDTH; col++) {
-            grid.getColumnConstraints().add(new ColumnConstraints(cell_size));
+            grid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
         }
 
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
-                Rectangle cell = new Rectangle(cell_size, cell_size, empty_colour);
-                cell.setStroke(grid_colour);
+                Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE, EMPTY_COLOUR);
+                cell.setStroke(GRID_COLOUR);
                 lockedCellViews[row][col] = cell;
                 grid.add(cell, col, row);
             }
         }
 
-        int boardWidth = Board.WIDTH * cell_size;
-        int boardHeight = Board.HEIGHT * cell_size;
+        int boardWidth = Board.WIDTH * CELL_SIZE;
+        int boardHeight = Board.HEIGHT * CELL_SIZE;
         grid.setMinSize(boardWidth, boardHeight);
         grid.setPrefSize(boardWidth, boardHeight);
         grid.setMaxSize(boardWidth, boardHeight);
@@ -214,7 +237,7 @@ public class GameScreen {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
                 lockedCellViews[row][col].setFill(
-                        board.isCellOccupied(row, col) ? lockedColors[row][col] : empty_colour);
+                        board.isCellOccupied(row, col) ? lockedColors[row][col] : EMPTY_COLOUR);
             }
         }
 
@@ -235,17 +258,17 @@ public class GameScreen {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col] == 1) {
-                    Rectangle cell = new Rectangle(cell_size, cell_size, piece.getColor());
-                    cell.setStroke(grid_colour);
-                    cell.setX(col * cell_size);
-                    cell.setY(row * cell_size);
+                    Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE, piece.getColor());
+                    cell.setStroke(GRID_COLOUR);
+                    cell.setX(col * CELL_SIZE);
+                    cell.setY(row * CELL_SIZE);
                     pieceView.getChildren().add(cell);
                 }
             }
         }
 
-        pieceView.setLayoutX(piece.getX() * cell_size);
-        pieceView.setLayoutY(piece.getY() * cell_size);
+        pieceView.setLayoutX(piece.getX() * CELL_SIZE);
+        pieceView.setLayoutY(piece.getY() * CELL_SIZE);
         return pieceView;
     }
 

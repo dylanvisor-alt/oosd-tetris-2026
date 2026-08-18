@@ -117,7 +117,7 @@ public class GameController {
         }
 
         double fallProgress = accumulatedFallMs / drop_speed;
-        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.cell_size);
+        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 
     private boolean canCurrentPieceFall() {
@@ -288,6 +288,6 @@ public class GameController {
     private void render() {
         game_screen.render(board, locked_colours, current_piece);
         double fallProgress = accumulatedFallMs / drop_speed;
-        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.cell_size);
+        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 }
