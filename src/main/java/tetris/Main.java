@@ -2,7 +2,6 @@ package tetris;
 
 import tetris.controller.GameController;
 import tetris.controller.HighScoreController;
-import tetris.ui.ExitDialog;
 import tetris.ui.GameScreen;
 import tetris.ui.HighScoreScreen;
 import tetris.ui.MainMenuScreen;
@@ -27,22 +26,11 @@ public class Main extends Application {
         primaryStage.setTitle("Tetris - 2006ICT");
         primaryStage.setResizable(false);
 
-        ExitDialog exitDialog = new ExitDialog(primaryStage);
-        Runnable requestExit = () -> {
-            if (exitDialog.showAndWait()) {
-                primaryStage.hide();
-            }
-        };
-        primaryStage.setOnCloseRequest(event -> {
-            event.consume();
-            requestExit.run();
-        });
-
         mainMenuScreen = new MainMenuScreen(
                 this::showGame,
                 null,
                 this::showHighScores,
-                requestExit
+                primaryStage::close
         );
 
         SplashScreen splashScreen = new SplashScreen();
