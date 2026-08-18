@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-/** Shows a confirmation before the player exits the application. */
 public final class ExitDialog {
 
     private final Stage owner;

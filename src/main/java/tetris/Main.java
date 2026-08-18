@@ -1,7 +1,9 @@
 package tetris;
 
+import tetris.controller.ConfigController;
 import tetris.controller.GameController;
 import tetris.controller.HighScoreController;
+import tetris.ui.ConfigurationScreen;
 import tetris.ui.GameScreen;
 import tetris.ui.HighScoreScreen;
 import tetris.ui.MainMenuScreen;
@@ -19,6 +21,7 @@ public class Main extends Application {
     private SceneManager sceneManager;
     private MainMenuScreen mainMenuScreen;
     private final HighScoreController highScoreController = new HighScoreController();
+    private final ConfigController configController = new ConfigController();
 
     @Override
     public void start(Stage primaryStage) {
@@ -28,7 +31,7 @@ public class Main extends Application {
 
         mainMenuScreen = new MainMenuScreen(
                 this::showGame,
-                null,
+                this::showConfiguration,
                 this::showHighScores,
                 primaryStage::close
         );
@@ -47,6 +50,14 @@ public class Main extends Application {
         GameController gameController = new GameController(gameScreen);
         sceneManager.show(gameScreen.getRoot());
         gameController.startGame();
+    }
+
+    private void showConfiguration() {
+        ConfigurationScreen configurationScreen = new ConfigurationScreen(
+                configController,
+                this::showMainMenu
+        );
+        sceneManager.show(configurationScreen.getRoot());
     }
 
     private void saveHighScore(int finalScore) {

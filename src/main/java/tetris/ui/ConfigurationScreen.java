@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import tetris.controller.ConfigController;
 import tetris.model.GameConfig;
 import tetris.util.Constants;
@@ -21,8 +22,27 @@ import tetris.util.Constants;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-/** Interactive Milestone 1 configuration screen. */
 public final class ConfigurationScreen {
+
+    private static final String BUTTON_STYLE =
+            "-fx-background-color: #1e1e1e;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-size: 14px;"
+                    + "-fx-padding: 10 0 10 0;"
+                    + "-fx-background-radius: 6;"
+                    + "-fx-border-color: #333333;"
+                    + "-fx-border-radius: 6;"
+                    + "-fx-border-width: 1;";
+
+    private static final String BUTTON_HOVER_STYLE =
+            "-fx-background-color: #007aff;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-size: 14px;"
+                    + "-fx-padding: 10 0 10 0;"
+                    + "-fx-background-radius: 6;"
+                    + "-fx-border-color: #007aff;"
+                    + "-fx-border-radius: 6;"
+                    + "-fx-border-width: 1;";
 
     private final StackPane root = new StackPane();
 
@@ -31,13 +51,21 @@ public final class ConfigurationScreen {
         Objects.requireNonNull(onBack, "onBack");
 
         Label title = new Label("Configuration");
-        title.getStyleClass().add("screen-title");
+        title.setTextFill(Color.WHITE);
+        title.setStyle("-fx-font-size: 32px; -fx-font-weight: bold;");
 
         GridPane settings = new GridPane();
         settings.setHgap(22);
         settings.setVgap(18);
         settings.setAlignment(Pos.CENTER);
-        settings.getStyleClass().add("config-grid");
+        settings.setPadding(new Insets(16));
+        settings.setStyle(
+                "-fx-background-color: #1a1a1a;"
+                        + "-fx-background-radius: 8;"
+                        + "-fx-border-color: #333333;"
+                        + "-fx-border-radius: 8;"
+                        + "-fx-border-width: 1;"
+        );
 
         ComboBox<String> fieldSize = new ComboBox<>();
         fieldSize.getItems().addAll(GameConfig.FIELD_SIZES);
@@ -47,7 +75,8 @@ public final class ConfigurationScreen {
         addSetting(settings, "Field size", fieldSize, 0);
 
         Label levelValue = new Label(Integer.toString(configController.getLevel()));
-        levelValue.getStyleClass().add("config-value");
+        levelValue.setTextFill(Color.web("#007aff"));
+        levelValue.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
 
         Slider level = new Slider(GameConfig.MIN_LEVEL, GameConfig.MAX_LEVEL, configController.getLevel());
         level.setMajorTickUnit(1);
@@ -76,29 +105,32 @@ public final class ConfigurationScreen {
                 configController.isExtendedModeEnabled(), configController::setExtendedModeEnabled), 5);
 
         Label note = new Label("Settings are saved for this session.");
-        note.getStyleClass().add("config-note");
+        note.setTextFill(Color.web("#999999"));
+        note.setStyle("-fx-font-size: 12px;");
 
         Button backButton = new Button("Back");
         backButton.setMaxWidth(Double.MAX_VALUE);
-        backButton.getStyleClass().add("menu-button");
+        backButton.setStyle(BUTTON_STYLE);
+        backButton.setOnMouseEntered(event -> backButton.setStyle(BUTTON_HOVER_STYLE));
+        backButton.setOnMouseExited(event -> backButton.setStyle(BUTTON_STYLE));
         backButton.setOnAction(event -> onBack.run());
 
         VBox content = new VBox(24, title, settings, note, backButton);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(34));
         content.setMaxWidth(440);
-        content.getStyleClass().add("menu-panel");
 
         root.getChildren().add(content);
         root.setAlignment(Pos.CENTER);
         root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
-        root.getStyleClass().add("app-background");
+        root.setStyle("-fx-background-color: #121212;");
     }
 
     private void addSetting(GridPane grid, String text, Node control, int row) {
         Label label = new Label(text);
-        label.getStyleClass().add("config-label");
+        label.setTextFill(Color.web("#cccccc"));
+        label.setStyle("-fx-font-size: 14px;");
         grid.add(label, 0, row);
         grid.add(control, 1, row);
     }
