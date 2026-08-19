@@ -62,12 +62,13 @@ public class GameScreen {
     private final Label scoreLabel = new Label("Score: 0");
     private final Label statusLabel = new Label();
     private final Button restartButton = new Button("Restart");
+    private final Button exitButton = new Button("Exit to Menu");
     private final Button saveScoreButton = new Button("Save Score");
 
     private Group activePieceView;
     private int finalScore;
 
-    public GameScreen(Runnable onRestart, IntConsumer onSaveScore) {
+    public GameScreen(Runnable onRestart, IntConsumer onSaveScore, Runnable menuExitButton) {
 
         Objects.requireNonNull(onRestart, "onRestart");
         Objects.requireNonNull(onSaveScore, "onSaveScore");
@@ -127,6 +128,13 @@ public class GameScreen {
         restartButton.setOnMouseEntered(event -> restartButton.setStyle(BUTTON_HOVER_STYLE));
         restartButton.setOnMouseExited(event -> restartButton.setStyle(BUTTON_STYLE));
 
+        exitButton.setOnAction(event -> menuExitButton.run());
+        exitButton.setVisible(false);
+        exitButton.setManaged(false);
+        exitButton.setStyle(BUTTON_STYLE);
+        exitButton.setOnMouseEntered(event -> exitButton.setStyle(BUTTON_HOVER_STYLE));
+        exitButton.setOnMouseExited(event -> exitButton.setStyle(BUTTON_STYLE));
+
         saveScoreButton.setOnAction(event -> onSaveScore.accept(finalScore));
         saveScoreButton.setVisible(false);
         saveScoreButton.setManaged(false);
@@ -139,6 +147,7 @@ public class GameScreen {
     // underneath on a second row - keeps the whole bar narrow instead of
     // stretching everything out sideways
 
+
     private VBox createBottomBar() {
         scoreLabel.setTextFill(Color.WHITE);
         scoreLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
@@ -147,7 +156,7 @@ public class GameScreen {
         statusLabel.setStyle("-fx-font-size: 14px;");
         statusLabel.setWrapText(true);
 
-        HBox scoreRow = new HBox(16, scoreLabel, statusLabel, restartButton, saveScoreButton);
+        HBox scoreRow = new HBox(16, scoreLabel, statusLabel, restartButton, saveScoreButton, exitButton);
         scoreRow.setAlignment(Pos.CENTER);
 
         Label controlsLabel = new Label(
@@ -222,10 +231,14 @@ public class GameScreen {
         restartButton.setVisible(true);
         saveScoreButton.setManaged(true);
         saveScoreButton.setVisible(true);
+        exitButton.setManaged(true);
+        exitButton.setVisible(true);
     }
 
     public void showPauseOverlay(boolean paused) {
         pauseOverlay.setPaused(paused);
+        exitButton.setVisible(paused);
+        exitButton.setManaged(paused);
     }
 
     /* -------------------------------------------------------------------- */
