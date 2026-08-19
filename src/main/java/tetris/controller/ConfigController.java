@@ -4,7 +4,6 @@ import tetris.model.GameConfig;
 
 import java.util.Objects;
 
-/** Coordinates configuration controls without coupling the model to JavaFX. */
 public final class ConfigController {
 
     private final GameConfig gameConfig;

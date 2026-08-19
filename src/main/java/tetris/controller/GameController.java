@@ -23,9 +23,6 @@ public class GameController {
     /*  settings never changed while the game is running                    */
     /* -------------------------------------------------------------------- */
 
-    // AnimationTimer only ever hands us nanoseconds, so this is the one spot
-    // a nanosecond value has to exist - everything else works in milliseconds
-
     private static final double NANO_TO_MS = 1_000_000.0;
 
     private static final double DROP_SPEED = 300.0;
@@ -37,9 +34,9 @@ public class GameController {
     /*  game state - changes constantly while playing                       */
     /* -------------------------------------------------------------------- */
     private final Board board = new Board();
-    private final GameScreen game_screen;
+    private final GameScreen gamesScreen;
     private final Color[][] LOCKED_COLOURS = new Color[Board.HEIGHT][Board.WIDTH];
-    private final AnimationTimer GRAVITY_TIMER;
+    private final AnimationTimer gravityTimer;
 
     private Tetromino current_piece;
     private GameState game_state = GameState.RUNNING;
@@ -47,39 +44,24 @@ public class GameController {
     private double lastFrameTimeMs;
     private double accumulatedFallMs;
 
-    public GameController(GameScreen game_screen) {
-        this.game_screen = game_screen;
-        GRAVITY_TIMER = new AnimationTimer() {
-            @Override
-            public void handle(long currentTimeNanos) {
-                // convert straight away so every other method deals in ms only
-                double currentTimeMs = currentTimeNanos / NANO_TO_MS;
-                updateGravity(currentTimeMs);
-            }
-        };
-    }
-
     /* -------------------------------------------------------------------- */
     /*  starting the game                                                    */
     /* -------------------------------------------------------------------- */
 
     public void startGame() {
-        game_screen.setKeyHandler(this::handleKeyPress);
+        gamesScreen.setKeyHandler(this::handleKeyPress);
         spawnPiece();
         render();
         if (game_state == GameState.RUNNING) {
-            GRAVITY_TIMER.start();
+            gravityTimer.start();
         }
-        game_screen.requestKeyboardFocus();
+        gamesScreen.requestKeyboardFocus();
     }
 
     /* -------------------------------------------------------------------- */
     /*  gravity - moves the piece down automatically over time              */
     /* -------------------------------------------------------------------- */
 
-    // moves only the active javafx node between logical board rows. the
-    // board model changes once each gravity interval, while keyboard input
-    // remains available on every frame
     private void updateGravity(double currentTimeMs) {
         if (game_state != GameState.RUNNING || current_piece == null) {
             return;
@@ -117,7 +99,7 @@ public class GameController {
         }
 
         double fallProgress = accumulatedFallMs / DROP_SPEED;
-        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
+        gamesScreen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 
     private boolean canCurrentPieceFall() {
@@ -133,6 +115,11 @@ public class GameController {
             togglePause();
             return;
         }
+
+        if (event.getCode() == KeyCode.E && game_state == GameState.PAUSED) {
+            backToMenu.run();
+        }
+
 
         if (game_state != GameState.RUNNING) {
             return;
@@ -151,6 +138,20 @@ public class GameController {
 
         resetFallProgressIfBlocked();
         render();
+    }
+
+    private Runnable backToMenu;
+
+    public GameController(GameScreen gameScreen, Runnable backToMenu) {
+        this.gamesScreen = gameScreen;
+        this.backToMenu = backToMenu;
+        gravityTimer = new AnimationTimer() {
+            @Override
+            public void handle(long currentTimeNanos) {
+                double currentTimeMs = currentTimeNanos / NANO_TO_MS;
+                updateGravity(currentTimeMs);
+            }
+        };
     }
 
     private void moveHorizontally(int direction) {
@@ -215,9 +216,6 @@ public class GameController {
         }
     }
 
-    // board is the single source of truth for which rows cleared - the
-    // colour grid just follows along with whatever rows board reports,
-    // instead of scanning and deciding this independently
     private void lockClearAndSpawn() {
         saveCurrentPieceColours();
         board.lockPiece(current_piece);
@@ -229,7 +227,7 @@ public class GameController {
 
         if (!clearedRows.isEmpty()) {
             score += scoreForLines(clearedRows.size());
-            game_screen.updateScore(score);
+            gamesScreen.updateScore(score);
         }
         spawnPiece();
     }
@@ -261,23 +259,23 @@ public class GameController {
         lastFrameTimeMs = 0;
         if (!board.canPlace(current_piece, current_piece.getX(), current_piece.getY())) {
             game_state = GameState.GAME_OVER;
-            GRAVITY_TIMER.stop();
-            game_screen.showGameOver(score);
+            gravityTimer.stop();
+            gamesScreen.showGameOver(score);
         }
     }
 
     private void togglePause() {
         if (game_state == GameState.RUNNING) {
             game_state = GameState.PAUSED;
-            GRAVITY_TIMER.stop();
+            gravityTimer.stop();
             lastFrameTimeMs = 0;
-            game_screen.showPauseOverlay(true);
-            game_screen.showStatus("Game paused");
+            gamesScreen.showPauseOverlay(true);
+            gamesScreen.showStatus("Game paused");
         } else if (game_state == GameState.PAUSED) {
             game_state = GameState.RUNNING;
-            GRAVITY_TIMER.start();
-            game_screen.showPauseOverlay(false);
-            game_screen.showStatus("");
+            gravityTimer.start();
+            gamesScreen.showPauseOverlay(false);
+            gamesScreen.showStatus("");
         }
     }
 
@@ -286,8 +284,8 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void render() {
-        game_screen.render(board, LOCKED_COLOURS, current_piece);
+        gamesScreen.render(board, LOCKED_COLOURS, current_piece);
         double fallProgress = accumulatedFallMs / DROP_SPEED;
-        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
+        gamesScreen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 }
