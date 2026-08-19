@@ -28,18 +28,18 @@ public class GameController {
     private static final double DROP_SPEED = 300.0;
     private static final double MAX_FRAME_GAP = 50.0;
 
-    private static final Color LOCKED_COLOUR = Color.web("#007aff");
+    private static final Color lockedColour = Color.web("#007aff");
 
     /* -------------------------------------------------------------------- */
     /*  game state - changes constantly while playing                       */
     /* -------------------------------------------------------------------- */
     private final Board board = new Board();
     private final GameScreen gamesScreen;
-    private final Color[][] LOCKED_COLOURS = new Color[Board.HEIGHT][Board.WIDTH];
+    private final Color[][] lockedColours = new Color[Board.HEIGHT][Board.WIDTH];
     private final AnimationTimer gravityTimer;
 
     private Tetromino current_piece;
-    private GameState game_state = GameState.RUNNING;
+    private GameState gameState = GameState.RUNNING;
     private int score;
     private double lastFrameTimeMs;
     private double accumulatedFallMs;
@@ -52,7 +52,7 @@ public class GameController {
         gamesScreen.setKeyHandler(this::handleKeyPress);
         spawnPiece();
         render();
-        if (game_state == GameState.RUNNING) {
+        if (gameState == GameState.RUNNING) {
             gravityTimer.start();
         }
         gamesScreen.requestKeyboardFocus();
@@ -63,7 +63,7 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void updateGravity(double currentTimeMs) {
-        if (game_state != GameState.RUNNING || current_piece == null) {
+        if (gameState != GameState.RUNNING || current_piece == null) {
             return;
         }
 
@@ -111,17 +111,17 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void handleKeyPress(KeyEvent event) {
-        if (event.getCode() == KeyCode.P && game_state != GameState.GAME_OVER) {
+        if (event.getCode() == KeyCode.P && gameState != GameState.GAME_OVER) {
             togglePause();
             return;
         }
 
-        if (event.getCode() == KeyCode.E && game_state == GameState.PAUSED) {
+        if (event.getCode() == KeyCode.E && gameState == GameState.PAUSED) {
             backToMenu.run();
         }
 
 
-        if (game_state != GameState.RUNNING) {
+        if (gameState != GameState.RUNNING) {
             return;
         }
 
@@ -209,7 +209,7 @@ public class GameController {
                     int boardRow = current_piece.getY() + row;
                     int boardCol = current_piece.getX() + col;
                     if (boardRow >= 0 && boardRow < Board.HEIGHT && boardCol >= 0 && boardCol < Board.WIDTH) {
-                        LOCKED_COLOURS[boardRow][boardCol] = LOCKED_COLOUR;
+                        lockedColours[boardRow][boardCol] = lockedColour;
                     }
                 }
             }
@@ -234,9 +234,9 @@ public class GameController {
 
     private void shiftColoursDown(int clearedRow) {
         for (int row = clearedRow; row > 0; row--) {
-            LOCKED_COLOURS[row] = LOCKED_COLOURS[row - 1].clone();
+            lockedColours[row] = lockedColours[row - 1].clone();
         }
-        LOCKED_COLOURS[0] = new Color[Board.WIDTH];
+        lockedColours[0] = new Color[Board.WIDTH];
     }
 
     private int scoreForLines(int lineCount) {
@@ -258,21 +258,21 @@ public class GameController {
         accumulatedFallMs = 0;
         lastFrameTimeMs = 0;
         if (!board.canPlace(current_piece, current_piece.getX(), current_piece.getY())) {
-            game_state = GameState.GAME_OVER;
+            gameState = GameState.GAME_OVER;
             gravityTimer.stop();
             gamesScreen.showGameOver(score);
         }
     }
 
     private void togglePause() {
-        if (game_state == GameState.RUNNING) {
-            game_state = GameState.PAUSED;
+        if (gameState == GameState.RUNNING) {
+            gameState = GameState.PAUSED;
             gravityTimer.stop();
             lastFrameTimeMs = 0;
             gamesScreen.showPauseOverlay(true);
             gamesScreen.showStatus("Game paused");
-        } else if (game_state == GameState.PAUSED) {
-            game_state = GameState.RUNNING;
+        } else if (gameState == GameState.PAUSED) {
+            gameState = GameState.RUNNING;
             gravityTimer.start();
             gamesScreen.showPauseOverlay(false);
             gamesScreen.showStatus("");
@@ -284,7 +284,7 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void render() {
-        gamesScreen.render(board, LOCKED_COLOURS, current_piece);
+        gamesScreen.render(board, lockedColours, current_piece);
         double fallProgress = accumulatedFallMs / DROP_SPEED;
         gamesScreen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
