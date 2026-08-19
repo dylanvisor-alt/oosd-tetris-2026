@@ -23,65 +23,47 @@ public class GameController {
     /*  settings never changed while the game is running                    */
     /* -------------------------------------------------------------------- */
 
-    // AnimationTimer only ever hands us nanoseconds, so this is the one spot
-    // a nanosecond value has to exist - everything else works in milliseconds
-
     private static final double NANO_TO_MS = 1_000_000.0;
 
     private static final double DROP_SPEED = 300.0;
     private static final double MAX_FRAME_GAP = 50.0;
 
-    private static final Color LOCKED_COLOUR = Color.web("#007aff");
+    private static final Color lockedColour = Color.web("#007aff");
 
     /* -------------------------------------------------------------------- */
     /*  game state - changes constantly while playing                       */
     /* -------------------------------------------------------------------- */
     private final Board board = new Board();
-    private final GameScreen game_screen;
-    private final Color[][] LOCKED_COLOURS = new Color[Board.HEIGHT][Board.WIDTH];
-    private final AnimationTimer GRAVITY_TIMER;
+    private final GameScreen gamesScreen;
+    private final Color[][] lockedColours = new Color[Board.HEIGHT][Board.WIDTH];
+    private final AnimationTimer gravityTimer;
 
-    private Tetromino current_piece;
-    private GameState game_state = GameState.RUNNING;
+    private Tetromino currentPiece;
+    private GameState gameState = GameState.RUNNING;
     private int score;
     private double lastFrameTimeMs;
     private double accumulatedFallMs;
-
-    public GameController(GameScreen game_screen) {
-        this.game_screen = game_screen;
-        GRAVITY_TIMER = new AnimationTimer() {
-            @Override
-            public void handle(long currentTimeNanos) {
-                // convert straight away so every other method deals in ms only
-                double currentTimeMs = currentTimeNanos / NANO_TO_MS;
-                updateGravity(currentTimeMs);
-            }
-        };
-    }
 
     /* -------------------------------------------------------------------- */
     /*  starting the game                                                    */
     /* -------------------------------------------------------------------- */
 
     public void startGame() {
-        game_screen.setKeyHandler(this::handleKeyPress);
+        gamesScreen.setKeyHandler(this::handleKeyPress);
         spawnPiece();
         render();
-        if (game_state == GameState.RUNNING) {
-            GRAVITY_TIMER.start();
+        if (gameState == GameState.RUNNING) {
+            gravityTimer.start();
         }
-        game_screen.requestKeyboardFocus();
+        gamesScreen.requestKeyboardFocus();
     }
 
     /* -------------------------------------------------------------------- */
     /*  gravity - moves the piece down automatically over time              */
     /* -------------------------------------------------------------------- */
 
-    // moves only the active javafx node between logical board rows. the
-    // board model changes once each gravity interval, while keyboard input
-    // remains available on every frame
     private void updateGravity(double currentTimeMs) {
-        if (game_state != GameState.RUNNING || current_piece == null) {
+        if (gameState != GameState.RUNNING || currentPiece == null) {
             return;
         }
 
@@ -101,7 +83,7 @@ public class GameController {
 
         accumulatedFallMs += frameDelta;
         if (accumulatedFallMs >= DROP_SPEED) {
-            current_piece.moveDown();
+            currentPiece.moveDown();
             accumulatedFallMs -= DROP_SPEED;
 
             if (!canCurrentPieceFall()) {
@@ -117,11 +99,11 @@ public class GameController {
         }
 
         double fallProgress = accumulatedFallMs / DROP_SPEED;
-        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
+        gamesScreen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 
     private boolean canCurrentPieceFall() {
-        return board.canPlace(current_piece, current_piece.getX(), current_piece.getY() + 1);
+        return board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY() + 1);
     }
 
     /* -------------------------------------------------------------------- */
@@ -129,12 +111,17 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void handleKeyPress(KeyEvent event) {
-        if (event.getCode() == KeyCode.P && game_state != GameState.GAME_OVER) {
+        if (event.getCode() == KeyCode.P && gameState != GameState.GAME_OVER) {
             togglePause();
             return;
         }
 
-        if (game_state != GameState.RUNNING) {
+        if (event.getCode() == KeyCode.E && gameState == GameState.PAUSED) {
+            backToMenu.run();
+        }
+
+
+        if (gameState != GameState.RUNNING) {
             return;
         }
 
@@ -153,19 +140,33 @@ public class GameController {
         render();
     }
 
+    private Runnable backToMenu;
+
+    public GameController(GameScreen gameScreen, Runnable backToMenu) {
+        this.gamesScreen = gameScreen;
+        this.backToMenu = backToMenu;
+        gravityTimer = new AnimationTimer() {
+            @Override
+            public void handle(long currentTimeNanos) {
+                double currentTimeMs = currentTimeNanos / NANO_TO_MS;
+                updateGravity(currentTimeMs);
+            }
+        };
+    }
+
     private void moveHorizontally(int direction) {
-        if (board.canPlace(current_piece, current_piece.getX() + direction, current_piece.getY())) {
+        if (board.canPlace(currentPiece, currentPiece.getX() + direction, currentPiece.getY())) {
             if (direction < 0) {
-                current_piece.moveLeft();
+                currentPiece.moveLeft();
             } else {
-                current_piece.moveRight();
+                currentPiece.moveRight();
             }
         }
     }
 
     private void softDrop() {
         if (canCurrentPieceFall()) {
-            current_piece.moveDown();
+            currentPiece.moveDown();
             accumulatedFallMs = 0;
         } else {
             lockClearAndSpawn();
@@ -173,8 +174,8 @@ public class GameController {
     }
 
     private void hardDrop() {
-        while (board.canPlace(current_piece, current_piece.getX(), current_piece.getY() + 1)) {
-            current_piece.moveDown();
+        while (board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY() + 1)) {
+            currentPiece.moveDown();
         }
         accumulatedFallMs = 0;
         lockClearAndSpawn();
@@ -187,12 +188,12 @@ public class GameController {
     }
 
     private void tryRotate() {
-        current_piece.rotate();
-        if (!board.canPlace(current_piece, current_piece.getX(), current_piece.getY())) {
+        currentPiece.rotate();
+        if (!board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY())) {
             // every supplied shape uses four rotations, so three more undo an invalid turn
-            current_piece.rotate();
-            current_piece.rotate();
-            current_piece.rotate();
+            currentPiece.rotate();
+            currentPiece.rotate();
+            currentPiece.rotate();
         }
     }
 
@@ -201,26 +202,16 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void saveCurrentPieceColours() {
-        int[][] shape = current_piece.getShape();
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col] == 1) {
-                    int boardRow = current_piece.getY() + row;
-                    int boardCol = current_piece.getX() + col;
-                    if (boardRow >= 0 && boardRow < Board.HEIGHT && boardCol >= 0 && boardCol < Board.WIDTH) {
-                        LOCKED_COLOURS[boardRow][boardCol] = LOCKED_COLOUR;
-                    }
-                }
+        board.eachCellFilled(currentPiece, currentPiece.getX(), currentPiece.getY(), (boardRow, boardCol) -> {
+            if (boardRow >= 0 && boardRow < Board.HEIGHT && boardCol >= 0 && boardCol < Board.WIDTH) {
+                lockedColours[boardRow][boardCol] = lockedColour;
             }
-        }
+        });
     }
 
-    // board is the single source of truth for which rows cleared - the
-    // colour grid just follows along with whatever rows board reports,
-    // instead of scanning and deciding this independently
     private void lockClearAndSpawn() {
         saveCurrentPieceColours();
-        board.lockPiece(current_piece);
+        board.lockPiece(currentPiece);
 
         List<Integer> clearedRows = board.clearFullRows();
         for (int row : clearedRows) {
@@ -229,16 +220,16 @@ public class GameController {
 
         if (!clearedRows.isEmpty()) {
             score += scoreForLines(clearedRows.size());
-            game_screen.updateScore(score);
+            gamesScreen.updateScore(score);
         }
         spawnPiece();
     }
 
     private void shiftColoursDown(int clearedRow) {
         for (int row = clearedRow; row > 0; row--) {
-            LOCKED_COLOURS[row] = LOCKED_COLOURS[row - 1].clone();
+            lockedColours[row] = lockedColours[row - 1].clone();
         }
-        LOCKED_COLOURS[0] = new Color[Board.WIDTH];
+        lockedColours[0] = new Color[Board.WIDTH];
     }
 
     private int scoreForLines(int lineCount) {
@@ -256,28 +247,28 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void spawnPiece() {
-        current_piece = TetrominoFactory.createRandomPiece();
+        currentPiece = TetrominoFactory.createRandomPiece();
         accumulatedFallMs = 0;
         lastFrameTimeMs = 0;
-        if (!board.canPlace(current_piece, current_piece.getX(), current_piece.getY())) {
-            game_state = GameState.GAME_OVER;
-            GRAVITY_TIMER.stop();
-            game_screen.showGameOver(score);
+        if (!board.canPlace(currentPiece, currentPiece.getX(), currentPiece.getY())) {
+            gameState = GameState.GAME_OVER;
+            gravityTimer.stop();
+            gamesScreen.showGameOver(score);
         }
     }
 
     private void togglePause() {
-        if (game_state == GameState.RUNNING) {
-            game_state = GameState.PAUSED;
-            GRAVITY_TIMER.stop();
+        if (gameState == GameState.RUNNING) {
+            gameState = GameState.PAUSED;
+            gravityTimer.stop();
             lastFrameTimeMs = 0;
-            game_screen.showPauseOverlay(true);
-            game_screen.showStatus("Game paused");
-        } else if (game_state == GameState.PAUSED) {
-            game_state = GameState.RUNNING;
-            GRAVITY_TIMER.start();
-            game_screen.showPauseOverlay(false);
-            game_screen.showStatus("");
+            gamesScreen.showPauseOverlay(true);
+            gamesScreen.showStatus("Game paused");
+        } else if (gameState == GameState.PAUSED) {
+            gameState = GameState.RUNNING;
+            gravityTimer.start();
+            gamesScreen.showPauseOverlay(false);
+            gamesScreen.showStatus("");
         }
     }
 
@@ -286,8 +277,8 @@ public class GameController {
     /* -------------------------------------------------------------------- */
 
     private void render() {
-        game_screen.render(board, LOCKED_COLOURS, current_piece);
+        gamesScreen.render(board, lockedColours, currentPiece);
         double fallProgress = accumulatedFallMs / DROP_SPEED;
-        game_screen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
+        gamesScreen.setActivePieceVerticalOffset(fallProgress * GameScreen.CELL_SIZE);
     }
 }

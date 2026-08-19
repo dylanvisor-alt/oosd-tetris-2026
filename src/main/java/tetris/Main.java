@@ -3,11 +3,7 @@ package tetris;
 import tetris.controller.ConfigController;
 import tetris.controller.GameController;
 import tetris.controller.HighScoreController;
-import tetris.ui.ConfigurationScreen;
-import tetris.ui.GameScreen;
-import tetris.ui.HighScoreScreen;
-import tetris.ui.MainMenuScreen;
-import tetris.ui.SplashScreen;
+import tetris.ui.*;
 import tetris.util.SceneManager;
 import javafx.application.Application;
 import javafx.scene.control.TextFormatter;
@@ -25,6 +21,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        this.primaryStage = primaryStage;
+
         sceneManager = new SceneManager(primaryStage);
         primaryStage.setTitle("Tetris - 2006ICT");
         primaryStage.setResizable(false);
@@ -33,7 +32,7 @@ public class Main extends Application {
                 this::showGame,
                 this::showConfiguration,
                 this::showHighScores,
-                primaryStage::close
+                this::confirmExit
         );
 
         SplashScreen splashScreen = new SplashScreen();
@@ -46,8 +45,8 @@ public class Main extends Application {
     }
 
     private void showGame() {
-        GameScreen gameScreen = new GameScreen(this::showGame, this::saveHighScore);
-        GameController gameController = new GameController(gameScreen);
+        GameScreen gameScreen = new GameScreen(this::showGame, this::saveHighScore, this::showMainMenu);
+        GameController gameController = new GameController(gameScreen, this::showMainMenu);
         sceneManager.show(gameScreen.getRoot());
         gameController.startGame();
     }
@@ -84,6 +83,15 @@ public class Main extends Application {
                 this::showMainMenu
         );
         sceneManager.show(highScoreScreen.getRoot());
+    }
+
+    private Stage primaryStage;
+
+    private void confirmExit() {
+        ExitDialog exitDialogue = new ExitDialog(primaryStage);
+        if (exitDialogue.showAndWait()) {
+            primaryStage.close();
+        }
     }
 
     public static void main(String[] args) {

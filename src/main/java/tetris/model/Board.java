@@ -41,40 +41,33 @@ public class Board {
     /*  collision checking and locking pieces in                           */
     /* -------------------------------------------------------------------- */
 
-    // checks whether a piece could legally sit at (newX, newY) without
-    // overlapping a wall, the floor, or an existing locked block
-    public boolean canPlace(Tetromino piece, int newX, int newY) {
+    public void eachCellFilled(Tetromino piece, int atX, int atY, java.util.function.BiConsumer<Integer, Integer> action) {
         int[][] shape = piece.getShape();
 
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col] == 1) {
-                    int boardRow = newY + row;
-                    int boardCol = newX + col;
-
-                    if (isCellOccupied(boardRow, boardCol)) {
-                        return false;
-                    }
+                    action.accept(atY + row, atX + col);
                 }
             }
         }
-        return true;
     }
 
-    // writes a piece's blocks permanently into the grid once it can't fall
-    // any further - this is what turns a falling piece into part of the stack
-    public void lockPiece(Tetromino piece) {
-        int[][] shape = piece.getShape();
+    // remove repeated logic in canPlace, lockPiece, GameController.saveCurrentPieceColours
 
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col] == 1) {
-                    int boardRow = piece.getY() + row;
-                    int boardCol = piece.getX() + col;
-                    setCell(boardRow, boardCol, 1);
-                }
+    public boolean canPlace(Tetromino piece, int newX, int newY) {
+        boolean[] fits = { true };
+        eachCellFilled(piece, newX, newY, (boardRow, boardCol) -> {
+            if (isCellOccupied(boardRow, boardCol)) {
+                fits[0] = false;
             }
-        }
+        });
+        return fits[0];
+    }
+
+    public void lockPiece(Tetromino piece) {
+        eachCellFilled(piece, piece.getX(), piece.getY(), (boardRow, boardCol) ->
+                setCell(boardRow, boardCol, 1));
     }
 
     /* -------------------------------------------------------------------- */

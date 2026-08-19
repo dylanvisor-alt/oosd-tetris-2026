@@ -6,7 +6,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-/* A reusable overlay shown above the board while gameplay is paused. */
 public class PauseOverlay extends StackPane {
 
     public PauseOverlay() {
@@ -14,14 +13,17 @@ public class PauseOverlay extends StackPane {
         title.setTextFill(Color.WHITE);
         title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
 
-        Label instruction = new Label("Press P to continue");
-        instruction.setTextFill(Color.RED);
+        Label pauseInstruction = new Label("Press P to Continue");
+        pauseInstruction.setTextFill(Color.RED);
 
-        VBox message = new VBox(8, title, instruction);
+        Label menuInstruction = new Label("Press E for Main Menu");
+        menuInstruction.setTextFill(Color.rgb(255, 0, 0, 0.6));
+
+        VBox message = new VBox(8, title, pauseInstruction, menuInstruction);
         message.setAlignment(Pos.CENTER);
         setAlignment(Pos.CENTER);
         getChildren().add(message);
-        setStyle("-fx-background-color: rgba(0, 0, 0, 0.68);");
+        setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
         setPaused(false);
     }
 
