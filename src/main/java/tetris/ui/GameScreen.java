@@ -32,28 +32,8 @@ import java.util.function.IntConsumer;
 public class GameScreen {
 
     public static final int CELL_SIZE = 28;
-    private static final Color EMPTY_COLOUR = Color.web("#1e1e1e");
-    private static final Color GRID_COLOUR = Color.web("#333333");
-
-    private static final String BUTTON_STYLE =
-            "-fx-background-color: #1e1e1e;"
-                    + "-fx-text-fill: white;"
-                    + "-fx-font-size: 13px;"
-                    + "-fx-padding: 8 14 8 14;"
-                    + "-fx-background-radius: 6;"
-                    + "-fx-border-color: #333333;"
-                    + "-fx-border-radius: 6;"
-                    + "-fx-border-width: 1;";
-
-    private static final String BUTTON_HOVER_STYLE =
-            "-fx-background-color: #007aff;"
-                    + "-fx-text-fill: white;"
-                    + "-fx-font-size: 13px;"
-                    + "-fx-padding: 8 14 8 14;"
-                    + "-fx-background-radius: 6;"
-                    + "-fx-border-color: #007aff;"
-                    + "-fx-border-radius: 6;"
-                    + "-fx-border-width: 1;";
+    private static final Color EMPTY_COLOUR = Color.web("#090d21");
+    private static final Color GRID_COLOUR = Color.web("#293462");
 
     private final BorderPane root = new BorderPane();
     private final Rectangle[][] lockedCellViews = new Rectangle[Board.HEIGHT][Board.WIDTH];
@@ -97,6 +77,7 @@ public class GameScreen {
         boardStack.setMinSize(boardWidth, boardHeight);
         boardStack.setPrefSize(boardWidth, boardHeight);
         boardStack.setMaxSize(boardWidth, boardHeight);
+        boardStack.getStyleClass().add("game-board-frame");
 
         /* -------------------------------------------------------------------- */
         /*  bottom bar - score/status on top, controls centered below           */
@@ -113,34 +94,29 @@ public class GameScreen {
         boardArea.setPadding(new Insets(10, 130, 10, 130));
         boardArea.setMinWidth(Constants.APP_WIDTH);
         boardArea.setPrefWidth(Constants.APP_WIDTH);
+        boardArea.getStyleClass().add("game-board-area");
 
         root.setCenter(boardArea);
         root.setBottom(bottomBar);
         root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
-        root.setStyle("-fx-background-color: #121212;");
+        root.getStyleClass().add("game-background");
         root.setFocusTraversable(true);
 
         restartButton.setOnAction(event -> onRestart.run());
         restartButton.setVisible(false);
         restartButton.setManaged(false);
-        restartButton.setStyle(BUTTON_STYLE);
-        restartButton.setOnMouseEntered(event -> restartButton.setStyle(BUTTON_HOVER_STYLE));
-        restartButton.setOnMouseExited(event -> restartButton.setStyle(BUTTON_STYLE));
+        restartButton.getStyleClass().add("game-action-button");
 
         exitButton.setOnAction(event -> menuExitButton.run());
         exitButton.setVisible(false);
         exitButton.setManaged(false);
-        exitButton.setStyle(BUTTON_STYLE);
-        exitButton.setOnMouseEntered(event -> exitButton.setStyle(BUTTON_HOVER_STYLE));
-        exitButton.setOnMouseExited(event -> exitButton.setStyle(BUTTON_STYLE));
+        exitButton.getStyleClass().addAll("game-action-button", "exit-menu-button");
 
         saveScoreButton.setOnAction(event -> onSaveScore.accept(finalScore));
         saveScoreButton.setVisible(false);
         saveScoreButton.setManaged(false);
-        saveScoreButton.setStyle(BUTTON_STYLE);
-        saveScoreButton.setOnMouseEntered(event -> saveScoreButton.setStyle(BUTTON_HOVER_STYLE));
-        saveScoreButton.setOnMouseExited(event -> saveScoreButton.setStyle(BUTTON_STYLE));
+        saveScoreButton.getStyleClass().add("game-action-button");
     }
 
     // score/status sit on their own row, with the controls hint centered
@@ -149,11 +125,9 @@ public class GameScreen {
 
 
     private VBox createBottomBar() {
-        scoreLabel.setTextFill(Color.WHITE);
-        scoreLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        scoreLabel.getStyleClass().add("game-score");
 
-        statusLabel.setTextFill(Color.web("#ff80ab"));
-        statusLabel.setStyle("-fx-font-size: 14px;");
+        statusLabel.getStyleClass().add("game-status");
         statusLabel.setWrapText(true);
 
         HBox scoreRow = new HBox(16, scoreLabel, statusLabel, restartButton, saveScoreButton, exitButton);
@@ -161,8 +135,7 @@ public class GameScreen {
 
         Label controlsLabel = new Label(
                 "\u2190 \u2192 Move  |  \u2191 Rotate  \n \u2193 Soft Drop  |  Space - Hard Drop  |  P - Pause");
-        controlsLabel.setTextFill(Color.web("#cccccc"));
-        controlsLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+        controlsLabel.getStyleClass().add("game-controls");
         controlsLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
         controlsLabel.setAlignment(Pos.CENTER);
         controlsLabel.setMaxWidth(Double.MAX_VALUE);
@@ -170,7 +143,7 @@ public class GameScreen {
         VBox bottomBar = new VBox(6, scoreRow, controlsLabel);
         bottomBar.setAlignment(Pos.CENTER);
         bottomBar.setPadding(new Insets(10));
-        bottomBar.setStyle("-fx-background-color: #1a1a1a;");
+        bottomBar.getStyleClass().add("game-bottom-bar");
         return bottomBar;
     }
 

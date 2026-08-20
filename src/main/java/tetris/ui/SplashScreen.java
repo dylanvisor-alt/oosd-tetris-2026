@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import tetris.util.Constants;
 
@@ -24,29 +23,27 @@ public class SplashScreen {
 
     public SplashScreen() {
         Label title = new Label("TETRIS");
-        title.setTextFill(Color.WHITE);
-        title.setStyle("-fx-font-size: 40px; -fx-font-weight: bold;");
+        title.getStyleClass().add("splash-title");
 
         Label course = new Label("2006ICT - Object Oriented Software Development");
-        course.setTextFill(Color.web("#cccccc"));
-        course.setStyle("-fx-font-size: 15px;");
+        course.getStyleClass().add("splash-course");
 
         ProgressIndicator progress = new ProgressIndicator();
         progress.setPrefSize(34, 34);
 
         Label loading = new Label("Loading game...");
-        loading.setTextFill(Color.web("#999999"));
-        loading.setStyle("-fx-font-size: 13px;");
+        loading.getStyleClass().add("splash-loading");
 
         VBox content = new VBox(12, title, course, progress, loading);
         content.setAlignment(Pos.CENTER);
         content.setMaxSize(360, 300);
+        content.getStyleClass().add("splash-panel");
 
         root.getChildren().add(content);
         root.setMinSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.setPrefSize(Constants.APP_WIDTH, Constants.APP_HEIGHT);
         root.setAlignment(Pos.CENTER);
-        root.setStyle("-fx-background-color: #121212;");
+        root.getStyleClass().add("app-background");
     }
 
     public Parent getRoot() {
